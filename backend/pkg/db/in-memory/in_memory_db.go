@@ -14,7 +14,17 @@ var defaultJobListings = []datatypes.JobListing{
 		RequiredSkills: []string{
 			"Can Code",
 			"Technion Student",
-		}},
+		},
+	},
+	{
+		ID:          "job2",
+		Title:       "Janitor",
+		Description: "This is an janitor job.",
+		Location:    "Haifa",
+		RequiredSkills: []string{
+			"TAU Student",
+		},
+	},
 }
 
 // NewInMemoryDB returns a new instance of InMemoryDB.
