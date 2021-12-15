@@ -54,7 +54,7 @@ func (s *Server) registerAPI(router *gin.Engine) {
 	// POST METHODS
 	router.POST("/jobs", s.insertJobListing)
 	// DELETE METHODS
-	router.DELETE("/jobs:_id", s.deleteJobListing)
+	router.DELETE("/jobs/id", s.deleteJobListing)
 }
 
 // getJobListings responds with the list of all job-listings as JSON.
@@ -80,7 +80,7 @@ func (s *Server) insertJobListing(c *gin.Context) {
 
 // deleteJobListing deletes a job listing by ID from the database.
 func (s *Server) deleteJobListing(c *gin.Context) {
-	id := c.Param("_id")
+	id := c.Param("id")
 
 	if id != "" && s.dbClient.DeleteJob(id) {
 		c.IndentedJSON(http.StatusOK, gin.H{"message": "job deleted"})
