@@ -64,7 +64,7 @@ type DB struct {
 
 // GetJobs returns the stored job-listings.
 func (db *DB) GetJobs() []datatypes.JobListing {
-	jobListings := make([]datatypes.JobListing, len(db.jobListingsMap))
+	jobListings := make([]datatypes.JobListing, 0)
 	for _, listing := range db.jobListingsMap {
 		jobListings = append(jobListings, listing)
 	}
