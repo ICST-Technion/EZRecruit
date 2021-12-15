@@ -11,8 +11,6 @@ import (
 
 const (
 	envVarContainerPort = "PORT"
-	domain              = "localhost"
-	certsFolder         = "certs"
 )
 
 // NewRESTAPIServer returns a new instance of RestAPIServer.
@@ -31,20 +29,15 @@ type Server struct {
 func (s *Server) Start() {
 	// the restAPI public methods
 	router := gin.Default()
-
-	// Ping handler
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
-	// GET METHODS
-	router.GET("/jobs", s.GetJobListings)
-
+	// register handlers
+	s.registerAPI(router)
 	// Get port
 	port := os.Getenv(envVarContainerPort)
 	if port == "" {
 		port = "8080"
 	}
 
+	// start
 	fmt.Printf("started server - url:%s port:%s", os.Getenv("PUBLIC_URL"), port)
 
 	if err := router.Run(fmt.Sprintf(":%s", port)); err != nil {
@@ -53,7 +46,13 @@ func (s *Server) Start() {
 	}
 }
 
-// GetJobListings responds with the list of all job-listings as JSON.
-func (s *Server) GetJobListings(c *gin.Context) {
+// registerAPI registers the handlers to the HTTP requests in router.
+func (s *Server) registerAPI(router *gin.Engine) {
+	// GET METHODS
+	router.GET("/jobs", s.getJobListings)
+}
+
+// getJobListings responds with the list of all job-listings as JSON.
+func (s *Server) getJobListings(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs())
 }
