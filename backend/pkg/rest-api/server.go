@@ -54,7 +54,7 @@ func (s *Server) registerAPI(router *gin.Engine) {
 	// POST METHODS
 	router.POST("/jobs", s.insertJobListing)
 	// DELETE METHODS
-	router.DELETE("/jobs/id", s.deleteJobListing)
+	router.DELETE("/jobs/:id", s.deleteJobListing)
 }
 
 // getJobListings responds with the list of all job-listings as JSON.
