@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"fmt"
+	"github.com/ICST-Technion/EZRecruit.git/datatypes"
 	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -50,9 +51,41 @@ func (s *Server) Start() {
 func (s *Server) registerAPI(router *gin.Engine) {
 	// GET METHODS
 	router.GET("/jobs", s.getJobListings)
+	// POST METHODS
+	router.POST("/jobs", s.insertJobListing)
+	// DELETE METHODS
+	router.DELETE("/jobs:_id", s.deleteJobListing)
 }
 
 // getJobListings responds with the list of all job-listings as JSON.
 func (s *Server) getJobListings(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs())
+}
+
+// insertJobListing inserts a job to the database.
+func (s *Server) insertJobListing(c *gin.Context) {
+	var jobListing datatypes.JobListing
+
+	// Call BindJSON to bind the received JSON to jobListing.
+	if err := c.BindJSON(&jobListing); err != nil {
+		fmt.Printf("failed to bind json in insertJobRequest - %v\n", err)
+		return
+	}
+
+	fmt.Printf("adding job - %v\n", jobListing)
+	// Add jobListing to collection.
+	id := s.dbClient.InsertJob(&jobListing)
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": fmt.Sprintf("job with id {%s} updated", id)})
+}
+
+// deleteJobListing deletes a job listing by ID from the database.
+func (s *Server) deleteJobListing(c *gin.Context) {
+	id := c.Param("_id")
+
+	if id != "" && s.dbClient.DeleteJob(id) {
+		c.IndentedJSON(http.StatusOK, gin.H{"message": "job deleted"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "job not found"})
 }
