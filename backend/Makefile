@@ -27,7 +27,7 @@ vendor:
 
 .PHONY: clean-vendor			##removes third party libraries from vendor directory
 clean-vendor:
-	-@rm -rf ./backend/vendor
+	-@rm -rf vendor
 
 .PHONY: build			##builds the controller
 build:
