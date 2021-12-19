@@ -38,7 +38,7 @@ def main():
     #get_path_from_user(path)
     #get_language_and_word(lng, search_for)
     if len(sys.argv) != 3:
-        print("Wrotng number of arguments")
+        print("Wrong number of arguments")
         exit(-1)
 
     path = sys.argv[1]
