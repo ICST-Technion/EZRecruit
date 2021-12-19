@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ICST-Technion/EZRecruit.git/datatypes"
 	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
+	"github.com/ICST-Technion/EZRecruit.git/queries"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -54,12 +55,22 @@ func (s *Server) registerAPI(router *gin.Engine) {
 	// POST METHODS
 	router.POST("/jobs", s.insertJobListing)
 	// DELETE METHODS
-	router.DELETE("/jobs/:id", s.deleteJobListing)
+	router.DELETE("/jobs", s.deleteJobListing)
 }
 
 // getJobListings responds with the list of all job-listings as JSON.
 func (s *Server) getJobListings(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs())
+	query := &queries.GetJobListingQuery{
+		Labels: []string{},
+	}
+
+	if err := c.ShouldBind(query); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	fmt.Printf("\ngot %v\n", query)
+
+	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs(query.Labels)) // TODO: support multi labels
 }
 
 // insertJobListing inserts a job to the database.
@@ -80,9 +91,7 @@ func (s *Server) insertJobListing(c *gin.Context) {
 
 // deleteJobListing deletes a job listing by ID from the database.
 func (s *Server) deleteJobListing(c *gin.Context) {
-	id := c.Param("id")
-
-	if id != "" && s.dbClient.DeleteJob(id) {
+	if id, found := c.GetQuery("id"); found && s.dbClient.DeleteJob(id) {
 		c.IndentedJSON(http.StatusOK, gin.H{"message": "job deleted"})
 		return
 	}
