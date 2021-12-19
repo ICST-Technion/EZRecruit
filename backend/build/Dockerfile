@@ -12,6 +12,7 @@ COPY Makefile Makefile
 COPY cmd/ cmd/
 COPY pkg/ pkg/
 COPY datatypes/ datatypes/
+COPY queries/ queries/
 RUN make build
 
 # Stage 2: Copy the binaries from the image builder to the base image
