@@ -1,2 +1,5 @@
 # EZRecruit
 TODO: fill me.
+
+
+# NOTE: DO NOT PUSH DIRECTLY TO MAIN BRANCH, SUBMIT PR!
