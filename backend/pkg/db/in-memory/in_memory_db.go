@@ -3,6 +3,7 @@ package inmemory
 import (
 	"github.com/ICST-Technion/EZRecruit.git/datatypes"
 	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
+	"github.com/ICST-Technion/EZRecruit.git/pkg/db/helpers"
 	"strconv"
 )
 
@@ -54,18 +55,24 @@ func NewInMemoryDB() db.DB {
 
 	return &DB{
 		jobListingsMap: jobListingsMap,
+		availableId:    0,
 	}
 }
 
 // DB struct implements DB interface with in-memory logic.
 type DB struct {
 	jobListingsMap map[string]datatypes.JobListing
+	availableId    int
 }
 
-// GetJobs returns the stored job-listings.
-func (db *DB) GetJobs() []datatypes.JobListing {
+// GetJobs function to return stored jobs. If labels is empty then returns all.
+func (db *DB) GetJobs(labels []string) []datatypes.JobListing {
 	jobListings := make([]datatypes.JobListing, 0)
 	for _, listing := range db.jobListingsMap {
+		if len(labels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(listing.Labels), labels) {
+			continue // not all labels match
+		}
+
 		jobListings = append(jobListings, listing)
 	}
 
@@ -75,8 +82,9 @@ func (db *DB) GetJobs() []datatypes.JobListing {
 // InsertJob adds a job to the stored job-listings.
 func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 	if jobListing.ID == "" {
-		// assign unique ID0
-		jobListing.ID = strconv.Itoa(len(db.jobListingsMap) + 1)
+		// assign unique ID
+		jobListing.ID = strconv.Itoa(db.availableId)
+		db.availableId++
 	}
 	// rewrite if ID exists
 	db.jobListingsMap[jobListing.ID] = *jobListing
