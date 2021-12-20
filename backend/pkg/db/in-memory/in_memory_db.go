@@ -7,45 +7,6 @@ import (
 	"strconv"
 )
 
-var defaultJobListings = []datatypes.JobListing{
-	{
-		ID:          "1",
-		Title:       "Engineer",
-		Description: "This is an engineer job.",
-		Location:    "Haifa",
-		RequiredSkills: []string{
-			"Can Code", "Technion Student",
-		},
-		Labels: []string{
-			"Engineer", "Technion", "Haifa", "Hi-tech",
-		},
-	},
-	{
-		ID:          "2",
-		Title:       "Janitor",
-		Description: "This is a janitor job.",
-		Location:    "Haifa",
-		RequiredSkills: []string{
-			"TAU Student",
-		},
-		Labels: []string{
-			"Janitor", "Cleaning", "Haifa", "TAU",
-		},
-	},
-	{
-		ID:          "3",
-		Title:       "Designer",
-		Description: "This is a designer job.",
-		Location:    "Haifa",
-		RequiredSkills: []string{
-			"Frontend Dev",
-		},
-		Labels: []string{
-			"Designer", "Designing", "Haifa", "Frontend",
-		},
-	},
-}
-
 // NewInMemoryDB returns a new instance of InMemoryDB.
 func NewInMemoryDB() db.DB {
 	jobListingsMap := make(map[string]datatypes.JobListing)
@@ -53,16 +14,25 @@ func NewInMemoryDB() db.DB {
 		jobListingsMap[jobListing.ID] = jobListing
 	}
 
+	jobApplicationsMap := make(map[string]datatypes.JobApplication)
+	for _, jobApplication := range defaultJobApplications {
+		jobApplicationsMap[jobApplication.User] = jobApplication
+	}
+
 	return &DB{
-		jobListingsMap: jobListingsMap,
-		availableId:    0,
+		jobListingsMap:         jobListingsMap,
+		jobApplicationsMap:     jobApplicationsMap,
+		availableListingId:     0,
+		availableApplicationId: 0,
 	}
 }
 
 // DB struct implements DB interface with in-memory logic.
 type DB struct {
-	jobListingsMap map[string]datatypes.JobListing
-	availableId    int
+	jobListingsMap         map[string]datatypes.JobListing
+	jobApplicationsMap     map[string]datatypes.JobApplication
+	availableListingId     int
+	availableApplicationId int
 }
 
 // GetJobs function to return stored jobs. If labels is empty then returns all.
@@ -83,8 +53,8 @@ func (db *DB) GetJobs(labels []string) []datatypes.JobListing {
 func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 	if jobListing.ID == "" {
 		// assign unique ID
-		jobListing.ID = strconv.Itoa(db.availableId)
-		db.availableId++
+		jobListing.ID = strconv.Itoa(db.availableListingId)
+		db.availableListingId++
 	}
 	// rewrite if ID exists
 	db.jobListingsMap[jobListing.ID] = *jobListing
@@ -100,4 +70,32 @@ func (db *DB) DeleteJob(jobId string) bool {
 	}
 
 	return false
+}
+
+// GetApplications function to return stored jobs. If labels is empty then returns all.
+func (db *DB) GetApplications(labels []string) []datatypes.JobApplication {
+	jobApplications := make([]datatypes.JobApplication, 0)
+	for _, application := range db.jobApplicationsMap {
+		if len(labels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(application.Labels), labels) {
+			continue // not all labels match
+		}
+
+		jobApplications = append(jobApplications, application)
+	}
+
+	return jobApplications
+}
+
+// InsertApplication adds a job to the stored job-applications.
+func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication) string {
+	if jobApplication.ID == "" {
+		// assign unique ID
+		jobApplication.ID = strconv.Itoa(db.availableApplicationId)
+		db.availableApplicationId++
+	}
+	// rewrite if ID exists
+	db.jobApplicationsMap[jobApplication.User] = *jobApplication
+	// append job
+
+	return jobApplication.ID
 }
