@@ -1,0 +1,16 @@
+import {fetch} from 'wix-fetch';
+import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
+
+// getJobs permforms GET on jobs, returns collection of job jsons.
+export function getJobs(label) {
+    var parameters = []
+    
+    if (label != undefined && label != null) {
+        parameters = ["labels=" + label]
+    }
+
+	return getBackendURL('jobs', parameters).then(restAPI => 
+        fetch(restAPI, {method: 'GET'}).then(response => 
+            response.json()) 
+        );
+}

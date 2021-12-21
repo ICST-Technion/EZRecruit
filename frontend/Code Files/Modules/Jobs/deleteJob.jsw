@@ -1,0 +1,12 @@
+import {fetch} from 'wix-fetch';
+import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
+
+// deleteJob performs DELETE on jobs with the parameter jobId.
+export function deleteJob(jobId) {
+	return getBackendURL('jobs', [jobId]).then(restAPI => {
+            return fetch(restAPI, {method: 'DELETE'}).then(response => 
+                response.json()
+            );
+        }
+    );
+}
