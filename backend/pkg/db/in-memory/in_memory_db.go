@@ -22,18 +22,25 @@ func NewInMemoryDB() db.DB {
 	return &DB{
 		jobListingsMap:         jobListingsMap,
 		jobApplicationsMap:     jobApplicationsMap,
-		availableListingId:     0,
-		availableApplicationId: 0,
+		userToResumeMap:        make(map[string]string),
+		availableListingId:     len(jobListingsMap),
+		availableApplicationId: len(jobApplicationsMap),
 	}
 }
 
 // DB struct implements DB interface with in-memory logic.
 type DB struct {
-	jobListingsMap         map[string]datatypes.JobListing
-	jobApplicationsMap     map[string]datatypes.JobApplication
+	jobListingsMap     map[string]datatypes.JobListing
+	jobApplicationsMap map[string]datatypes.JobApplication
+	userToResumeMap    map[string]string
+
 	availableListingId     int
 	availableApplicationId int
 }
+
+/// ##############################################
+/// ############ JOB LISTING HANDLERS ############
+/// ##############################################
 
 // GetJobs function to return stored jobs. If labels is empty then returns all.
 func (db *DB) GetJobs(labels []string) []datatypes.JobListing {
@@ -56,7 +63,7 @@ func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 		jobListing.ID = strconv.Itoa(db.availableListingId)
 		db.availableListingId++
 	}
-	// rewrite if ID exists
+	// (rewrites if ID exists)
 	db.jobListingsMap[jobListing.ID] = *jobListing
 
 	return jobListing.ID
@@ -72,6 +79,10 @@ func (db *DB) DeleteJob(jobId string) bool {
 	return false
 }
 
+/// ##############################################
+/// ########## JOB APPLICATION HANDLERS ##########
+/// ##############################################
+
 // GetApplications function to return stored jobs. If labels is empty then returns all.
 func (db *DB) GetApplications(labels []string) []datatypes.JobApplication {
 	jobApplications := make([]datatypes.JobApplication, 0)
@@ -80,22 +91,41 @@ func (db *DB) GetApplications(labels []string) []datatypes.JobApplication {
 			continue // not all labels match
 		}
 
-		jobApplications = append(jobApplications, application)
+		// get job title for request
+		if jobListing, found := db.jobListingsMap[application.JobId]; found {
+			application.JobTitle = jobListing.Title
+			jobApplications = append(jobApplications, application)
+		}
 	}
 
 	return jobApplications
 }
 
 // InsertApplication adds a job to the stored job-applications.
-func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication) string {
+func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication, resumeLocation string) string {
 	if jobApplication.ID == "" {
 		// assign unique ID
 		jobApplication.ID = strconv.Itoa(db.availableApplicationId)
 		db.availableApplicationId++
 	}
-	// rewrite if ID exists
+	// (rewrites if ID exists)
 	db.jobApplicationsMap[jobApplication.User] = *jobApplication
-	// append job
+
+	db.userToResumeMap[jobApplication.User] = resumeLocation
 
 	return jobApplication.ID
+}
+
+/// ##############################################
+/// ############ RESUME FILE HANDLERS ############
+/// ##############################################
+
+// GetUserResumeFileLocation returns user's resume file location.
+func (db *DB) GetUserResumeFileLocation(user string) (string, bool) {
+	location, found := db.userToResumeMap[user]
+	if !found {
+		location = "default application"
+	}
+
+	return location, found
 }

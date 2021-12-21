@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	envVarContainerPort = "PORT"
+	envVarContainerPort  = "PORT"
+	resumeFolderLocation = "resume"
 )
 
 // NewRESTAPIServer returns a new instance of RestAPIServer.
@@ -50,9 +51,14 @@ func (s *Server) Start() {
 
 // registerAPI registers the handlers to the HTTP requests in router.
 func (s *Server) registerAPI(router *gin.Engine) {
+	router.LoadHTMLFiles("/usr/local/bin/upload_resume.html")
+	router.GET("/upload", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "upload_resume.html", gin.H{})
+	})
 	// GET METHODS
 	router.GET("/jobs", s.getJobListings)
 	router.GET("/applications", s.getJobApplications)
+	router.GET("/resume", s.getApplicantResume)
 	// POST METHODS
 	router.POST("/jobs", s.insertJobListing)
 	router.POST("/applications", s.insertJobApplication)
@@ -107,6 +113,18 @@ func (s *Server) deleteJobListing(c *gin.Context) {
 /// #############################################
 
 // getJobApplications responds with a list of the job-applications relevant to the request.
+func (s *Server) getApplicantResume(c *gin.Context) {
+	if user, found := c.GetQuery("user"); found {
+		if file, exists := s.dbClient.GetUserResumeFileLocation(user); exists {
+			c.IndentedJSON(http.StatusOK, gin.H{"message": file})
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user does not have a resume file saved"})
+}
+
+// getJobApplications responds with a list of the job-applications relevant to the request.
 func (s *Server) getJobApplications(c *gin.Context) {
 	query := &queries.GetJobApplication{
 		Labels: []string{},
@@ -133,19 +151,19 @@ func (s *Server) insertJobApplication(c *gin.Context) {
 		return
 	}
 
-	jobApplication.ResumeFileLocation = fmt.Sprintf("%s_%s", jobApplication.User, file.Filename)
+	fileSaveLocation := fmt.Sprintf("%s_%s", jobApplication.User, file.Filename)
 
 	// save file
-	err = c.SaveUploadedFile(file, "resume/"+jobApplication.ResumeFileLocation)
+	err = c.SaveUploadedFile(file, fmt.Sprintf("%s/%s", resumeFolderLocation, fileSaveLocation))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "failed to save resume file, contact admin"})
-		fmt.Printf("failed to save resume file %s - %v", jobApplication.ResumeFileLocation, err)
+		fmt.Printf("failed to save resume file %s - %v", fileSaveLocation, err)
 
 		return
 	}
 
 	fmt.Printf("adding application - %v\n", jobApplication)
 	// Add jobListing to collection.
-	id := s.dbClient.InsertApplication(jobApplication)
+	id := s.dbClient.InsertApplication(jobApplication, fileSaveLocation)
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": fmt.Sprintf("recieved job application - %s", id)})
 }

@@ -7,7 +7,7 @@ import (
 
 var defaultJobListings = []datatypes.JobListing{
 	{
-		ID: "1",
+		ID: "0",
 		PostJobListing: queries.PostJobListing{
 			Title:       "Engineer",
 			Description: "This is an engineer job.",
@@ -21,7 +21,7 @@ var defaultJobListings = []datatypes.JobListing{
 		},
 	},
 	{
-		ID: "2",
+		ID: "1",
 		PostJobListing: queries.PostJobListing{
 			Title:       "Janitor",
 			Description: "This is a janitor job.",
@@ -35,7 +35,7 @@ var defaultJobListings = []datatypes.JobListing{
 		},
 	},
 	{
-		ID: "3",
+		ID: "2",
 		PostJobListing: queries.PostJobListing{
 			Title:       "Designer",
 			Description: "This is a designer job.",
@@ -54,14 +54,84 @@ var defaultJobApplications = []datatypes.JobApplication{
 	{
 		ID: "0",
 		PostJobApplication: queries.PostJobApplication{
-			JobId:    "1",
-			User:     "jSmith",
-			Name:     "John Smith",
-			Email:    "john@smith-and-sons.com",
-			Phone:    "0543333334",
-			Location: "Haifa",
+			JobId:     "1",
+			User:      "jSmith",
+			FirstName: "John",
+			LastName:  "Smith",
+			Email:     "john@smith-and-sons.com",
+			Phone:     "0543333334",
 			Labels: []string{
 				"Generic Name Carrier", "John The Smither", "Programmer", "Technion",
+			},
+		},
+	},
+	{
+		ID: "1",
+		PostJobApplication: queries.PostJobApplication{
+			JobId:     "1",
+			User:      "Brandon",
+			FirstName: "Sleepy",
+			LastName:  "Joe",
+			Email:     "whitehouse5@email.com",
+			Phone:     "0019732956231",
+			Labels: []string{
+				"USA", "White House", "Washington", "Harvard",
+			},
+		},
+	},
+	{
+		ID: "2",
+		PostJobApplication: queries.PostJobApplication{
+			JobId:     "1",
+			User:      "YantiP",
+			FirstName: "Yanti",
+			LastName:  "Parazi",
+			Email:     "YantiP123@union_of_what_the_hell.com",
+			Phone:     "0545533334",
+			Labels: []string{
+				"University of Life", "Dogs", "Sheperd",
+			},
+		},
+	},
+	{
+		ID: "3",
+		PostJobApplication: queries.PostJobApplication{
+			JobId:     "0",
+			User:      "Delta",
+			FirstName: "Corona",
+			LastName:  "Virus",
+			Email:     "covid19@smith-and-sons.com",
+			Phone:     "0541111111",
+			Labels: []string{
+				"China", "Virus", "Bat", "MIT", "Hard working",
+			},
+		},
+	},
+	{
+		ID: "4",
+		PostJobApplication: queries.PostJobApplication{
+			JobId:     "2",
+			User:      "make_a_trade",
+			FirstName: "Ben",
+			LastName:  "Simons",
+			Email:     "no_phily@yahoo.com",
+			Phone:     "0019731632531",
+			Labels: []string{
+				"NBA", "Trade", "Lazy", "Technion",
+			},
+		},
+	},
+	{
+		ID: "5",
+		PostJobApplication: queries.PostJobApplication{
+			JobId:     "2",
+			User:      "BBB",
+			FirstName: "Bomboleo",
+			LastName:  "Bombalea",
+			Email:     "BBB18329@gmail.com",
+			Phone:     "0542733534",
+			Labels: []string{
+				"MIT", "Programmer", "Hard working",
 			},
 		},
 	},

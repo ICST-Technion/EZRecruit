@@ -6,6 +6,7 @@ import "github.com/ICST-Technion/EZRecruit.git/datatypes"
 type DB interface {
 	JobListingsHandler
 	JobApplicationsHandler
+	ResumeFileHandler
 }
 
 // JobListingsHandler abstracts the functionality needed from a DB client for handling job-listings.
@@ -28,7 +29,13 @@ type JobApplicationsHandler interface {
 	// Otherwise, the given job-listing overwrites the existing one.
 	//
 	// Returns the listing's ID.
-	InsertApplication(jobApplication *datatypes.JobApplication) string
+	InsertApplication(jobApplication *datatypes.JobApplication, resumeLocation string) string
 	// GetApplications function to return stored job applications. If labels is empty then returns all.
 	GetApplications(labels []string) []datatypes.JobApplication
+}
+
+// ResumeFileHandler abstracts the functionality needed from a DB client for handling resume files.
+type ResumeFileHandler interface {
+	// GetUserResumeFileLocation returns user's resume file location and whether it was found.
+	GetUserResumeFileLocation(user string) (string, bool)
 }

@@ -24,6 +24,12 @@ ENV USER_NAME=${COMPONENT}
 # install operator binary
 COPY --from=builder /workspace/${COMPONENT}/bin/${COMPONENT} /usr/local/bin/manager
 
+# allow user to fully control the /usr/local/bin/resume directory (save resume files)
+COPY web-templates/upload_resume.html /usr/local/bin/upload_resume.html
+RUN mkdir /usr/local/bin/resume
+RUN chown -R ${USER_UID}:0 /usr/local/bin
+RUN chmod -R 0755 /usr/local/bin
+
 COPY build/scripts/user_setup /usr/local/scripts/user_setup
 RUN  /usr/local/scripts/user_setup
 

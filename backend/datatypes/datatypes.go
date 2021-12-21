@@ -10,7 +10,7 @@ type JobListing struct {
 
 // JobApplication represents a job-application entry.
 type JobApplication struct {
-	ID string `json:"_id" form:"_id"`
+	ID       string `json:"_id" form:"_id"`
+	JobTitle string `json:"jobTitle" form:"jobTitle"`
 	queries.PostJobApplication
-	ResumeFileLocation string
 }
