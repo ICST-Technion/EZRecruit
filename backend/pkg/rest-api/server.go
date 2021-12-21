@@ -13,7 +13,8 @@ import (
 
 const (
 	envVarContainerPort  = "PORT"
-	resumeFolderLocation = "resume"
+	resumeFolderLocation = "/usr/local/bin/resume"
+	workDir              = "/usr/local/bin"
 )
 
 // NewRESTAPIServer returns a new instance of RestAPIServer.
@@ -51,7 +52,7 @@ func (s *Server) Start() {
 
 // registerAPI registers the handlers to the HTTP requests in router.
 func (s *Server) registerAPI(router *gin.Engine) {
-	router.LoadHTMLFiles("/usr/local/bin/upload_resume.html")
+	router.LoadHTMLFiles(fmt.Sprintf("%s/%s", workDir, "upload_resume.html"))
 	router.GET("/upload", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "upload_resume.html", gin.H{})
 	})

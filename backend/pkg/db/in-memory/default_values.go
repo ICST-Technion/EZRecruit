@@ -23,14 +23,14 @@ var defaultJobListings = []datatypes.JobListing{
 	{
 		ID: "1",
 		PostJobListing: queries.PostJobListing{
-			Title:       "Janitor",
-			Description: "This is a janitor job.",
+			Title:       "QA",
+			Description: "This is a QA job.",
 			Location:    "Tel-Aviv",
 			RequiredSkills: []string{
 				"TAU Student",
 			},
 			Labels: []string{
-				"Janitor", "Cleaning", "Tel-Aviv", "TAU",
+				"QA", "Hi-tech", "Tel-Aviv", "TAU",
 			},
 		},
 	},
