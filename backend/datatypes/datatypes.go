@@ -14,3 +14,9 @@ type JobApplication struct {
 	JobTitle string `json:"jobTitle" form:"jobTitle"`
 	queries.PostJobApplication
 }
+
+// PaginatedResponse represents a paginated response.
+type PaginatedResponse struct {
+	Size  int         `form:"size" json:"size"`
+	Value interface{} `form:"value" json:"value"`
+}
