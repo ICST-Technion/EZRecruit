@@ -10,6 +10,7 @@ type GetJobApplication struct {
 type PostJobApplication struct {
 	JobId     string   `form:"job" json:"job"`
 	User      string   `form:"user" json:"user"`
+	Status    string   `form:"status" json:"status"`
 	FirstName string   `form:"firstName" json:"firstName"`
 	LastName  string   `form:"lastName" json:"lastName"`
 	Email     string   `form:"email" json:"email"`

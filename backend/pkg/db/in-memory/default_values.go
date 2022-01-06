@@ -5,6 +5,8 @@ import (
 	"github.com/ICST-Technion/EZRecruit.git/queries"
 )
 
+const gForm = "https://docs.google.com/forms/d/e/1FAIpQLSdotIRtdK9qfTQ41ZfmckWV5GiA_c0_TRuIXtMiyJYANLwE3A/viewform"
+
 var defaultJobListings = []datatypes.JobListing{
 	{
 		ID: "0",
@@ -12,6 +14,7 @@ var defaultJobListings = []datatypes.JobListing{
 			Title:       "Engineer",
 			Description: "This is an engineer job.",
 			Location:    "Haifa",
+			FormLink:    gForm,
 			RequiredSkills: []string{
 				"Can Code", "Technion Student",
 			},
@@ -26,6 +29,7 @@ var defaultJobListings = []datatypes.JobListing{
 			Title:       "QA",
 			Description: "This is a QA job.",
 			Location:    "Tel-Aviv",
+			FormLink:    gForm,
 			RequiredSkills: []string{
 				"TAU Student",
 			},
@@ -40,6 +44,7 @@ var defaultJobListings = []datatypes.JobListing{
 			Title:       "Designer",
 			Description: "This is a designer job.",
 			Location:    "Haifa",
+			FormLink:    gForm,
 			RequiredSkills: []string{
 				"Frontend Dev",
 			},
@@ -56,6 +61,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "1",
 			User:      "jSmith",
+			Status:    "חדש",
 			FirstName: "John",
 			LastName:  "Smith",
 			Email:     "john@smith-and-sons.com",
@@ -70,6 +76,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "1",
 			User:      "Brandon",
+			Status:    "חדש",
 			FirstName: "Sleepy",
 			LastName:  "Joe",
 			Email:     "whitehouse5@email.com",
@@ -84,6 +91,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "1",
 			User:      "YantiP",
+			Status:    "חדש",
 			FirstName: "Yanti",
 			LastName:  "Parazi",
 			Email:     "YantiP123@union_of_what_the_hell.com",
@@ -98,6 +106,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "0",
 			User:      "Delta",
+			Status:    "חדש",
 			FirstName: "Corona",
 			LastName:  "Virus",
 			Email:     "covid19@smith-and-sons.com",
@@ -112,6 +121,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "2",
 			User:      "make_a_trade",
+			Status:    "חדש",
 			FirstName: "Ben",
 			LastName:  "Simons",
 			Email:     "no_phily@yahoo.com",
@@ -126,6 +136,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 		PostJobApplication: queries.PostJobApplication{
 			JobId:     "2",
 			User:      "BBB",
+			Status:    "חדש",
 			FirstName: "Bomboleo",
 			LastName:  "Bombalea",
 			Email:     "BBB18329@gmail.com",

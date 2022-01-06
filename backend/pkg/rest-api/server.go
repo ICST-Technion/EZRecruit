@@ -76,13 +76,26 @@ func (s *Server) getJobListings(c *gin.Context) {
 	query := &queries.GetJobListing{
 		Filterable: &queries.Filterable{FilterLabels: []string{}},
 		Sortable:   &queries.Sortable{SortLabels: []string{}},
+		Pagination: &queries.Pagination{},
 	}
 
 	if err := c.ShouldBind(query); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs(query.Filterable, query.Sortable))
+	jobListings := s.dbClient.GetJobs(query.Filterable, query.Sortable)
+
+	if query.Pagination.Limit == 0 {
+		c.IndentedJSON(http.StatusOK, datatypes.PaginatedResponse{Size: len(jobListings), Value: jobListings})
+	} else if query.Pagination.Limit >= len(jobListings) {
+		c.IndentedJSON(http.StatusOK, jobListings) // result smaller than limit
+	} else if (query.Pagination.Offset+1)*query.Pagination.Limit >= len(jobListings) {
+		c.IndentedJSON(http.StatusOK, datatypes.PaginatedResponse{Size: len(jobListings),
+			Value: jobListings[query.Pagination.Offset*query.Pagination.Limit:]}) // chunk left
+	} else {
+		c.IndentedJSON(http.StatusOK, datatypes.PaginatedResponse{Size: len(jobListings),
+			Value: jobListings[query.Pagination.Offset*query.Pagination.Limit : (query.Pagination.Offset+1)*query.Pagination.Limit]}) // pagination
+	}
 }
 
 // insertJobListing inserts a job to the database.
