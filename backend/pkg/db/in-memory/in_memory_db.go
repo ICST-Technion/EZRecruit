@@ -1,10 +1,14 @@
 package inmemory
 
 import (
+	"fmt"
 	"github.com/ICST-Technion/EZRecruit.git/datatypes"
 	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
 	"github.com/ICST-Technion/EZRecruit.git/pkg/db/helpers"
+	"github.com/ICST-Technion/EZRecruit.git/queries"
+	"sort"
 	"strconv"
+	"strings"
 )
 
 // NewInMemoryDB returns a new instance of InMemoryDB.
@@ -43,15 +47,34 @@ type DB struct {
 /// ##############################################
 
 // GetJobs function to return stored jobs. If labels is empty then returns all.
-func (db *DB) GetJobs(labels []string) []datatypes.JobListing {
+func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable) []datatypes.JobListing {
 	jobListings := make([]datatypes.JobListing, 0)
 	for _, listing := range db.jobListingsMap {
-		if len(labels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(listing.Labels), labels) {
+		// filter by
+		if len(filterable.FilterLabels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(listing.Labels),
+			filterable.FilterLabels) {
 			continue // not all labels match
 		}
 
 		jobListings = append(jobListings, listing)
 	}
+
+	// sort result
+	sort.Slice(jobListings, func(i, j int) bool {
+		intersectionSlice1 := helpers.GetIntersectionSize(jobListings[i].Labels, sortable.SortLabels)
+		intersectionSlice2 := helpers.GetIntersectionSize(jobListings[j].Labels, sortable.SortLabels)
+
+		// first has more matches
+		if intersectionSlice1 > intersectionSlice2 {
+			return true
+		}
+		// first has fewer matches
+		if intersectionSlice1 < intersectionSlice2 {
+			return false
+		}
+
+		return strings.Compare(jobListings[i].Title, jobListings[j].Title) > 0
+	})
 
 	return jobListings
 }
@@ -84,10 +107,12 @@ func (db *DB) DeleteJob(jobId string) bool {
 /// ##############################################
 
 // GetApplications function to return stored jobs. If labels is empty then returns all.
-func (db *DB) GetApplications(labels []string) []datatypes.JobApplication {
+func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.Sortable) []datatypes.JobApplication {
 	jobApplications := make([]datatypes.JobApplication, 0)
 	for _, application := range db.jobApplicationsMap {
-		if len(labels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(application.Labels), labels) {
+		// filter by
+		if len(filterable.FilterLabels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(application.Labels),
+			filterable.FilterLabels) {
 			continue // not all labels match
 		}
 
@@ -98,6 +123,23 @@ func (db *DB) GetApplications(labels []string) []datatypes.JobApplication {
 		}
 	}
 
+	// sort result
+	sort.Slice(jobApplications, func(i, j int) bool {
+		intersectionSlice1 := helpers.GetIntersectionSize(jobApplications[i].Labels, sortable.SortLabels)
+		intersectionSlice2 := helpers.GetIntersectionSize(jobApplications[j].Labels, sortable.SortLabels)
+
+		// first has more matches
+		if intersectionSlice1 > intersectionSlice2 {
+			return true
+		}
+		// first has fewer matches
+		if intersectionSlice1 < intersectionSlice2 {
+			return false
+		}
+
+		return strings.Compare(jobApplications[i].FirstName, jobApplications[j].FirstName) > 0
+	})
+
 	return jobApplications
 }
 
@@ -107,6 +149,8 @@ func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication, resume
 		// assign unique ID
 		jobApplication.ID = strconv.Itoa(db.availableApplicationId)
 		db.availableApplicationId++
+		// append job ID to labels
+		jobApplication.Labels = append([]string{fmt.Sprintf("job:%s", jobApplication.JobId)}, jobApplication.Labels...)
 	}
 	// (rewrites if ID exists)
 	db.jobApplicationsMap[jobApplication.User] = *jobApplication

@@ -61,7 +61,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "john@smith-and-sons.com",
 			Phone:     "0543333334",
 			Labels: []string{
-				"Generic Name Carrier", "John The Smither", "Programmer", "Technion",
+				"job:1", "Generic Name Carrier", "John The Smither", "Programmer", "Technion",
 			},
 		},
 	},
@@ -75,7 +75,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "whitehouse5@email.com",
 			Phone:     "0019732956231",
 			Labels: []string{
-				"USA", "White House", "Washington", "Harvard",
+				"job:1", "USA", "White House", "Washington", "Harvard",
 			},
 		},
 	},
@@ -89,7 +89,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "YantiP123@union_of_what_the_hell.com",
 			Phone:     "0545533334",
 			Labels: []string{
-				"University of Life", "Dogs", "Sheperd",
+				"job:1", "University of Life", "Dogs", "Sheperd",
 			},
 		},
 	},
@@ -103,7 +103,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "covid19@smith-and-sons.com",
 			Phone:     "0541111111",
 			Labels: []string{
-				"China", "Virus", "Bat", "MIT", "Hard working",
+				"job:0", "China", "Virus", "Bat", "MIT", "Hard working",
 			},
 		},
 	},
@@ -117,7 +117,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "no_phily@yahoo.com",
 			Phone:     "0019731632531",
 			Labels: []string{
-				"NBA", "Trade", "Lazy", "Technion",
+				"job:2", "NBA", "Trade", "Lazy", "Technion",
 			},
 		},
 	},
@@ -131,7 +131,7 @@ var defaultJobApplications = []datatypes.JobApplication{
 			Email:     "BBB18329@gmail.com",
 			Phone:     "0542733534",
 			Labels: []string{
-				"MIT", "Programmer", "Hard working",
+				"job:2", "MIT", "Programmer", "Hard working",
 			},
 		},
 	},

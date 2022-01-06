@@ -2,7 +2,8 @@ package queries
 
 // GetJobListing presents the members of the GetJobListing URL query.
 type GetJobListing struct {
-	Labels []string `form:"labels" json:"labels"`
+	*Sortable
+	*Filterable
 }
 
 // PostJobListing presents the members of the POST job-listing request.
