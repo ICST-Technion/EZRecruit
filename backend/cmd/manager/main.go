@@ -5,6 +5,8 @@ import (
 	"github.com/ICST-Technion/EZRecruit.git/pkg/rest-api"
 )
 
+const envVarWorkDir = "WORK_DIR"
+
 func main() {
 	// in memory DB
 	inMemoryDB := inmemory.NewInMemoryDB()

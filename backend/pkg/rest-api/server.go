@@ -74,14 +74,15 @@ func (s *Server) registerAPI(router *gin.Engine) {
 // getJobListings responds with a list of the job-listings relevant to the request.
 func (s *Server) getJobListings(c *gin.Context) {
 	query := &queries.GetJobListing{
-		Labels: []string{},
+		Filterable: &queries.Filterable{FilterLabels: []string{}},
+		Sortable:   &queries.Sortable{SortLabels: []string{}},
 	}
 
 	if err := c.ShouldBind(query); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs(query.Labels))
+	c.IndentedJSON(http.StatusOK, s.dbClient.GetJobs(query.Filterable, query.Sortable))
 }
 
 // insertJobListing inserts a job to the database.
@@ -128,14 +129,15 @@ func (s *Server) getApplicantResume(c *gin.Context) {
 // getJobApplications responds with a list of the job-applications relevant to the request.
 func (s *Server) getJobApplications(c *gin.Context) {
 	query := &queries.GetJobApplication{
-		Labels: []string{},
+		Filterable: &queries.Filterable{FilterLabels: []string{}},
+		Sortable:   &queries.Sortable{SortLabels: []string{}},
 	}
 
 	if err := c.ShouldBind(query); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	c.IndentedJSON(http.StatusOK, s.dbClient.GetApplications(query.Labels))
+	c.IndentedJSON(http.StatusOK, s.dbClient.GetApplications(query.Filterable, query.Sortable))
 }
 
 // insertJobListing inserts a job application to the database.
