@@ -1,6 +1,8 @@
 package inmemory
 
 import (
+	"fmt"
+
 	"github.com/ICST-Technion/EZRecruit.git/datatypes"
 	"github.com/ICST-Technion/EZRecruit.git/queries"
 )
@@ -61,6 +63,21 @@ func getDefaultApplications() []datatypes.JobApplication {
 	return append(getDefaultApplicationsPart1(), getDefaultApplicationsPart2()...)
 }
 
+func getStatusLabel(hebrewStatus string) string {
+	statusMap := map[string]int{
+		"חדש":                 datatypes.New,
+		"מייל שכר":            datatypes.OfferSent,
+		"ראיון טלפוני":        datatypes.PhoneInterview,
+		"ראיון פרונטלי ראשון": datatypes.FirstFrontalInterview,
+		"ראיון פרונטלי שני":   datatypes.SecondFrontalInterview,
+		"משימה":               datatypes.Task,
+		"נדחה":                datatypes.Rejected,
+		"להציע תפקיד אחר":     datatypes.ProposeAnotherJob,
+	}
+
+	return fmt.Sprintf("status:%d", statusMap[hebrewStatus])
+}
+
 // for linters.
 func getDefaultApplicationsPart1() []datatypes.JobApplication {
 	return []datatypes.JobApplication{
@@ -84,7 +101,7 @@ func getDefaultApplicationsPart1() []datatypes.JobApplication {
 			PostJobApplication: queries.PostJobApplication{
 				JobId:     "1",
 				User:      "Brandon",
-				Status:    "חדש",
+				Status:    "מייל שכר",
 				FirstName: "Sleepy",
 				LastName:  "Joe",
 				Email:     "whitehouse5@email.com",
@@ -99,7 +116,7 @@ func getDefaultApplicationsPart1() []datatypes.JobApplication {
 			PostJobApplication: queries.PostJobApplication{
 				JobId:     "1",
 				User:      "YantiP",
-				Status:    "חדש",
+				Status:    "ראיון טלפוני",
 				FirstName: "Yanti",
 				LastName:  "Parazi",
 				Email:     "YantiP123@union_of_what_the_hell.com",
@@ -119,7 +136,7 @@ func getDefaultApplicationsPart2() []datatypes.JobApplication {
 			PostJobApplication: queries.PostJobApplication{
 				JobId:     "0",
 				User:      "Delta",
-				Status:    "חדש",
+				Status:    "ראיון פרונטלי ראשון",
 				FirstName: "Corona",
 				LastName:  "Virus",
 				Email:     "covid19@smith-and-sons.com",
@@ -134,7 +151,7 @@ func getDefaultApplicationsPart2() []datatypes.JobApplication {
 			PostJobApplication: queries.PostJobApplication{
 				JobId:     "2",
 				User:      "make_a_trade",
-				Status:    "חדש",
+				Status:    "ראיון פרונטלי שני",
 				FirstName: "Ben",
 				LastName:  "Simons",
 				Email:     "no_phily@yahoo.com",

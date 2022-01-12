@@ -14,12 +14,16 @@ import (
 // NewInMemoryDB returns a new instance of InMemoryDB.
 func NewInMemoryDB() *DB {
 	jobListingsMap := make(map[string]datatypes.JobListing)
+
 	for _, jobListing := range getDefaultJobListings() {
 		jobListingsMap[jobListing.ID] = jobListing
 	}
 
 	jobApplicationsMap := make(map[string]datatypes.JobApplication)
+
 	for _, jobApplication := range getDefaultApplications() {
+		// make label from status
+		jobApplication.Labels = append(jobApplication.Labels, getStatusLabel(jobApplication.Status))
 		jobApplicationsMap[jobApplication.User] = jobApplication
 	}
 
