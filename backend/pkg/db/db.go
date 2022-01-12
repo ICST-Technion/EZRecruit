@@ -23,7 +23,7 @@ type JobListingsHandler interface {
 	InsertJob(jobListing *datatypes.JobListing) string
 	// DeleteJob function to delete a job given its unique identifier. If a relevant job is found and is deleted,
 	// returns true. Otherwise, returns false.
-	DeleteJob(jobId string) bool
+	DeleteJob(jobID string) bool
 }
 
 // JobApplicationsHandler abstracts the functionality needed from a DB client for handling job-applications.

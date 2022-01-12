@@ -15,11 +15,13 @@ IMAGE_TAG ?= latest
 IMAGE := ${REGISTRY}/${COMPONENT}:${IMAGE_TAG}
 
 .PHONY: all				##formats the code, downloads vendor libs, and builds executable
-all: vendor fmt build
+all: vendor fmt lint build
 
 .PHONY: fmt				##formats the code
 fmt:
+	@gci -w ./cmd/ ./pkg/
 	@go fmt ./cmd/... ./pkg/...
+	@gofumpt -w ./cmd/ ./pkg/
 
 .PHONY: vendor			##download all third party libraries and puts them inside vendor directory
 vendor:
@@ -40,6 +42,12 @@ build-images: all
 .PHONY: push-images			##pushes the local docker image to docker registry
 push-images: build-images
 	@docker push ${IMAGE}
+
+.PHONY: lint				##runs code analysis tools
+lint:
+	go vet ./cmd/... ./pkg/...
+	golint ./cmd/... ./pkg/...
+	golangci-lint run ./cmd/... ./pkg/...
 
 .PHONY: clean			##cleans the build directories
 clean:
