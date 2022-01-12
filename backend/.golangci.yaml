@@ -1,0 +1,12 @@
+linters:
+  enable-all: true
+  disable:
+    - nlreturn
+    - ireturn
+    - exhaustivestruct
+    - godox
+    - forbidigo
+
+run:
+  skip-dirs:
+    - vendor
