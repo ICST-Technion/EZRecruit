@@ -1,8 +1,8 @@
 package db
 
 import (
-	"github.com/ICST-Technion/EZRecruit.git/datatypes"
-	"github.com/ICST-Technion/EZRecruit.git/queries"
+	"github.com/ICST-Technion/EZRecruit/datatypes"
+	"github.com/ICST-Technion/EZRecruit/queries"
 )
 
 // DB abstracts the functionality needed from a DB client.

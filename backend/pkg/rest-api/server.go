@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ICST-Technion/EZRecruit.git/datatypes"
-	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
-	"github.com/ICST-Technion/EZRecruit.git/queries"
+	"github.com/ICST-Technion/EZRecruit/datatypes"
+	"github.com/ICST-Technion/EZRecruit/pkg/db"
+	"github.com/ICST-Technion/EZRecruit/queries"
 	"github.com/gin-gonic/gin"
 )
 

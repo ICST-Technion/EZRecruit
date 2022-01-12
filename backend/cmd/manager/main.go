@@ -1,8 +1,8 @@
 package main
 
 import (
-	inmemory "github.com/ICST-Technion/EZRecruit.git/pkg/db/in-memory"
-	restapi "github.com/ICST-Technion/EZRecruit.git/pkg/rest-api"
+	inmemory "github.com/ICST-Technion/EZRecruit/pkg/db/in-memory"
+	restapi "github.com/ICST-Technion/EZRecruit/pkg/rest-api"
 )
 
 func main() {

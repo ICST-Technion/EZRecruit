@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ICST-Technion/EZRecruit.git/datatypes"
-	"github.com/ICST-Technion/EZRecruit.git/pkg/db/helpers"
-	"github.com/ICST-Technion/EZRecruit.git/queries"
+	"github.com/ICST-Technion/EZRecruit/datatypes"
+	"github.com/ICST-Technion/EZRecruit/pkg/db/helpers"
+	"github.com/ICST-Technion/EZRecruit/queries"
 )
 
 // NewInMemoryDB returns a new instance of InMemoryDB.

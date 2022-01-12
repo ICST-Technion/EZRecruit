@@ -3,8 +3,8 @@ package inmemory
 import (
 	"fmt"
 
-	"github.com/ICST-Technion/EZRecruit.git/datatypes"
-	"github.com/ICST-Technion/EZRecruit.git/queries"
+	"github.com/ICST-Technion/EZRecruit/datatypes"
+	"github.com/ICST-Technion/EZRecruit/queries"
 )
 
 const gForm = "https://docs.google.com/forms/d/e/1FAIpQLSdotIRtdK9qfTQ41ZfmckWV5GiA_c0_TRuIXtMiyJYANLwE3A/viewform"

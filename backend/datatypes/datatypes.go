@@ -1,6 +1,6 @@
 package datatypes
 
-import "github.com/ICST-Technion/EZRecruit.git/queries"
+import "github.com/ICST-Technion/EZRecruit/queries"
 
 // JobListing represents a job-listing entry.
 type JobListing struct {
