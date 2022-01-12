@@ -1,0 +1,12 @@
+import {fetch} from 'wix-fetch';
+import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
+// Sample backend code in a multiplication.jsw file:
+
+export function getResume(user) {
+    var parameters = ["user="+user]
+
+	return getBackendURL('resume', parameters).then(restAPI =>
+        fetch(restAPI, {method: 'GET'}).then(response =>
+            response.json())
+        );
+}
