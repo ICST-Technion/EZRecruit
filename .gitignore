@@ -1,4 +1,4 @@
-/backend/vendor/
-/backend/bin/
-/backend/resume/
-/backend/web-templates/
+
+/vendor/
+/bin/
+/resume/
