@@ -3,7 +3,6 @@ module github.com/ICST-Technion/EZRecruit
 go 1.17
 
 require (
-	github.com/ICST-Technion/EZRecruit v0.0.0-20220112191851-8699d8a393bb
 	github.com/deckarep/golang-set v1.8.0
 	github.com/gin-gonic/gin v1.7.7
 )
