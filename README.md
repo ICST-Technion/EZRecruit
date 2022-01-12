@@ -1,7 +1,7 @@
 [comment]:  # ( Copyright Contributors to the Open Cluster Management project )
 
 # EZRecruit
-[![Go Report Card](https://goreportcard.com/badge/github.com/open-cluster-management/hub-of-hubs-spec-transport-bridge)](https://goreportcard.com/badge/github.com/vMaroon/EZRecruit)
+[![Go Report Card](https://goreportcard.com/badge/github.com/open-cluster-management/hub-of-hubs-spec-transport-bridge)](https://goreportcard.com/report/github.com/ICST-Technion/EZRecruit)
 [![License](https://img.shields.io/github/license/open-cluster-management/hub-of-hubs-spec-transport-bridge)](/LICENSE)
 ## Backend Hierarchy
 
