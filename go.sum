@@ -1,5 +1,3 @@
-github.com/ICST-Technion/EZRecruit v0.0.0-20220112191851-8699d8a393bb h1:KTRGAMN/wWAoOPebQ4R4R+IBY58zcQ3Xdt4Vz9gQH3k=
-github.com/ICST-Technion/EZRecruit v0.0.0-20220112191851-8699d8a393bb/go.mod h1:Sf0oVTBQ6IJER37QKgBDxzfQOb7hOG7OG2c5QDIoac0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
