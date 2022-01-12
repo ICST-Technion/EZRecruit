@@ -60,4 +60,4 @@ The [frontend](frontend) folder contains the code from Wix.
 ## Tests
 
 We did not implement any unit/e2e tests for this POC. 
-At t is the developer's responsibility to build/test their code before merging.
+It is the developer's responsibility to build/test their code before **submitting PRs**.
