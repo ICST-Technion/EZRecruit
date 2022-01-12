@@ -1,4 +1,4 @@
-# Stage 1: Use image builder to build the target binaries
+# Stage 1: Use golang container as builder to build the target binaries
 FROM golang:1.17 AS builder
 
 ARG COMPONENT
@@ -15,7 +15,7 @@ COPY datatypes/ datatypes/
 COPY queries/ queries/
 RUN make build
 
-# Stage 2: Copy the binaries from the image builder to the base image
+# Stage 2: Copy the binaries from the builder image to the base image
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 ARG COMPONENT
 ENV USER_UID=1001
