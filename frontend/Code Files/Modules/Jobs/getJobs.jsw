@@ -5,12 +5,27 @@ import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
 export function getJobs(label) {
     var parameters = []
     
-    if (label != undefined && label != null) {
+    /*if (label != undefined && label != null) {
         parameters = ["labels=" + label]
+    }*/
+
+    if (label != undefined && label != null) {
+        label = label.trim().split(/\s*,\s*/)
+        parameters = ["filterBy=" + label[0]]
+        for (let i = 1; i < label.length; i++) {
+            parameters[0] += "&filterBy=" + label[i];
+        }
+    }
+    if (label != undefined && label != null) {
+        label = label.trim().split(/\s*,\s*/)
+        parameters[0] += "&sortBy=" + label[0]
+        for (let i = 1; i < label.length; i++) {
+            parameters[0] += "&sortBy=" + label[i];
+        }
     }
 
-	return getBackendURL('jobs', parameters).then(restAPI => 
-        fetch(restAPI, {method: 'GET'}).then(response => 
-            response.json()) 
+	return getBackendURL('jobs', parameters).then(restAPI =>
+        fetch(restAPI, {method: 'GET'}).then(response =>
+            response.json())
         );
 }
