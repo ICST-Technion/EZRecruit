@@ -1,4 +1,4 @@
-module github.com/vMaroon/EZRecruit
+module github.com/ICST-Technion/EZRecruit
 
 go 1.17
 
