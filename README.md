@@ -1,8 +1,8 @@
 [comment]:  # ( Copyright Contributors to the Open Cluster Management project )
 
-# EZRecruit - REST-API Backend
+# EZRecruit
 
-## Hierarchy
+## Backend Hierarchy
 
 ### REST-API Server [/pkg/rest-api](pkg/rest-api/server.go)
 The server uses [gin-gotonic](github.com/gin-gonic) pkg to run a RESTful API listener. 
