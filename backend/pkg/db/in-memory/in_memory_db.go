@@ -2,24 +2,24 @@ package inmemory
 
 import (
 	"fmt"
-	"github.com/ICST-Technion/EZRecruit.git/datatypes"
-	"github.com/ICST-Technion/EZRecruit.git/pkg/db"
-	"github.com/ICST-Technion/EZRecruit.git/pkg/db/helpers"
-	"github.com/ICST-Technion/EZRecruit.git/queries"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/ICST-Technion/EZRecruit.git/datatypes"
+	"github.com/ICST-Technion/EZRecruit.git/pkg/db/helpers"
+	"github.com/ICST-Technion/EZRecruit.git/queries"
 )
 
 // NewInMemoryDB returns a new instance of InMemoryDB.
-func NewInMemoryDB() db.DB {
+func NewInMemoryDB() *DB {
 	jobListingsMap := make(map[string]datatypes.JobListing)
-	for _, jobListing := range defaultJobListings {
+	for _, jobListing := range getDefaultJobListings() {
 		jobListingsMap[jobListing.ID] = jobListing
 	}
 
 	jobApplicationsMap := make(map[string]datatypes.JobApplication)
-	for _, jobApplication := range defaultJobApplications {
+	for _, jobApplication := range getDefaultApplications() {
 		jobApplicationsMap[jobApplication.User] = jobApplication
 	}
 
@@ -27,8 +27,8 @@ func NewInMemoryDB() db.DB {
 		jobListingsMap:         jobListingsMap,
 		jobApplicationsMap:     jobApplicationsMap,
 		userToResumeMap:        make(map[string]string),
-		availableListingId:     len(jobListingsMap),
-		availableApplicationId: len(jobApplicationsMap),
+		availableListingID:     len(jobListingsMap),
+		availableApplicationID: len(jobApplicationsMap),
 	}
 }
 
@@ -38,8 +38,8 @@ type DB struct {
 	jobApplicationsMap map[string]datatypes.JobApplication
 	userToResumeMap    map[string]string
 
-	availableListingId     int
-	availableApplicationId int
+	availableListingID     int
+	availableApplicationID int
 }
 
 /// ##############################################
@@ -49,6 +49,7 @@ type DB struct {
 // GetJobs function to return stored jobs. If labels is empty then returns all.
 func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable) []datatypes.JobListing {
 	jobListings := make([]datatypes.JobListing, 0)
+
 	for _, listing := range db.jobListingsMap {
 		// filter by
 		if len(filterable.FilterLabels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(listing.Labels),
@@ -60,9 +61,9 @@ func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable
 	}
 
 	// sort result
-	sort.Slice(jobListings, func(i, j int) bool {
-		intersectionSlice1 := helpers.GetIntersectionSize(jobListings[i].Labels, sortable.SortLabels)
-		intersectionSlice2 := helpers.GetIntersectionSize(jobListings[j].Labels, sortable.SortLabels)
+	sort.Slice(jobListings, func(job1, job2 int) bool {
+		intersectionSlice1 := helpers.GetIntersectionSize(jobListings[job1].Labels, sortable.SortLabels)
+		intersectionSlice2 := helpers.GetIntersectionSize(jobListings[job2].Labels, sortable.SortLabels)
 
 		// first has more matches
 		if intersectionSlice1 > intersectionSlice2 {
@@ -73,7 +74,7 @@ func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable
 			return false
 		}
 
-		return strings.Compare(jobListings[i].Title, jobListings[j].Title) > 0
+		return strings.Compare(jobListings[job1].Title, jobListings[job2].Title) > 0
 	})
 
 	return jobListings
@@ -83,8 +84,8 @@ func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable
 func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 	if jobListing.ID == "" {
 		// assign unique ID
-		jobListing.ID = strconv.Itoa(db.availableListingId)
-		db.availableListingId++
+		jobListing.ID = strconv.Itoa(db.availableListingID)
+		db.availableListingID++
 	}
 	// (rewrites if ID exists)
 	db.jobListingsMap[jobListing.ID] = *jobListing
@@ -93,9 +94,9 @@ func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 }
 
 // DeleteJob adds a job to the stored job-listings.
-func (db *DB) DeleteJob(jobId string) bool {
-	if _, found := db.jobListingsMap[jobId]; found {
-		delete(db.jobListingsMap, jobId)
+func (db *DB) DeleteJob(jobID string) bool {
+	if _, found := db.jobListingsMap[jobID]; found {
+		delete(db.jobListingsMap, jobID)
 		return true
 	}
 
@@ -109,6 +110,7 @@ func (db *DB) DeleteJob(jobId string) bool {
 // GetApplications function to return stored jobs. If labels is empty then returns all.
 func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.Sortable) []datatypes.JobApplication {
 	jobApplications := make([]datatypes.JobApplication, 0)
+
 	for _, application := range db.jobApplicationsMap {
 		// filter by
 		if len(filterable.FilterLabels) > 0 && !helpers.SetContainsAll(helpers.CreateSetFromSlice(application.Labels),
@@ -119,14 +121,17 @@ func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.
 		// get job title for request
 		if jobListing, found := db.jobListingsMap[application.JobId]; found {
 			application.JobTitle = jobListing.Title
-			jobApplications = append(jobApplications, application)
+		} else {
+			application.JobTitle = "archived"
 		}
+
+		jobApplications = append(jobApplications, application)
 	}
 
 	// sort result
-	sort.Slice(jobApplications, func(i, j int) bool {
-		intersectionSlice1 := helpers.GetIntersectionSize(jobApplications[i].Labels, sortable.SortLabels)
-		intersectionSlice2 := helpers.GetIntersectionSize(jobApplications[j].Labels, sortable.SortLabels)
+	sort.Slice(jobApplications, func(job1, job2 int) bool {
+		intersectionSlice1 := helpers.GetIntersectionSize(jobApplications[job1].Labels, sortable.SortLabels)
+		intersectionSlice2 := helpers.GetIntersectionSize(jobApplications[job2].Labels, sortable.SortLabels)
 
 		// first has more matches
 		if intersectionSlice1 > intersectionSlice2 {
@@ -137,7 +142,7 @@ func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.
 			return false
 		}
 
-		return strings.Compare(jobApplications[i].FirstName, jobApplications[j].FirstName) > 0
+		return strings.Compare(jobApplications[job1].FirstName, jobApplications[job2].FirstName) > 0
 	})
 
 	return jobApplications
@@ -147,8 +152,8 @@ func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.
 func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication, resumeLocation string) string {
 	if jobApplication.ID == "" {
 		// assign unique ID
-		jobApplication.ID = strconv.Itoa(db.availableApplicationId)
-		db.availableApplicationId++
+		jobApplication.ID = strconv.Itoa(db.availableApplicationID)
+		db.availableApplicationID++
 		// append job ID to labels
 		jobApplication.Labels = append([]string{fmt.Sprintf("job:%s", jobApplication.JobId)}, jobApplication.Labels...)
 	}

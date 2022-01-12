@@ -1,8 +1,9 @@
 package helpers
 
 import (
-	set "github.com/deckarep/golang-set"
 	"strings"
+
+	set "github.com/deckarep/golang-set"
 )
 
 // CreateSetFromSlice returns a set contains all items in the given slice. if slice is nil, returns empty set.

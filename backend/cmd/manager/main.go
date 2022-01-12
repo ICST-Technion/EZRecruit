@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/ICST-Technion/EZRecruit.git/pkg/db/in-memory"
-	"github.com/ICST-Technion/EZRecruit.git/pkg/rest-api"
+	inmemory "github.com/ICST-Technion/EZRecruit.git/pkg/db/in-memory"
+	restapi "github.com/ICST-Technion/EZRecruit.git/pkg/rest-api"
 )
-
-const envVarWorkDir = "WORK_DIR"
 
 func main() {
 	// in memory DB
