@@ -10,7 +10,7 @@
 #   - clean - cleans the build directories
 #   - clean-all - superset of 'clean' that also removes vendor dir
 
-COMPONENT := $(shell basename $(shell pwd))
+COMPONENT := ezrecruit
 IMAGE_TAG ?= latest
 IMAGE := ${REGISTRY}/${COMPONENT}:${IMAGE_TAG}
 
