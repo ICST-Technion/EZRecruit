@@ -35,6 +35,8 @@ type JobApplicationsHandler interface {
 	InsertApplication(jobApplication *datatypes.JobApplication, resumeLocation string) string
 	// GetApplications function to return stored job applications. If labels is empty then returns all.
 	GetApplications(filterable *queries.Filterable, sortable *queries.Sortable) []datatypes.JobApplication
+	// SetApplicantsStatus function to update status for given users.
+	SetApplicantsStatus(users []string, status int)
 }
 
 // ResumeFileHandler abstracts the functionality needed from a DB client for handling resume files.

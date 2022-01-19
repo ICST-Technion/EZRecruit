@@ -64,6 +64,7 @@ func (s *Server) registerAPI(router *gin.Engine) {
 	// POST METHODS
 	router.POST("/jobs", s.insertJobListing)
 	router.POST("/applications", s.insertJobApplication)
+	router.POST("/status", s.updateApplicantsStatus)
 	// DELETE METHODS
 	router.DELETE("/jobs", s.deleteJobListing)
 }
@@ -82,6 +83,9 @@ func (s *Server) getJobListings(ctx *gin.Context) {
 
 	if err := ctx.ShouldBind(query); err != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Printf("failed to bind object in getJobListings - %v\n", err)
+
+		return
 	}
 
 	jobListings := s.dbClient.GetJobs(query.Filterable, query.Sortable)
@@ -117,7 +121,9 @@ func (s *Server) insertJobListing(ctx *gin.Context) {
 	jobListing := &datatypes.JobListing{}
 
 	if err := ctx.ShouldBind(jobListing); err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		fmt.Printf("failed to bind object in insertJobRequest - %v\n", err)
+
 		return
 	}
 	// Add jobListing to collection.
@@ -161,6 +167,9 @@ func (s *Server) getJobApplications(ctx *gin.Context) {
 
 	if err := ctx.ShouldBind(query); err != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Printf("failed to bind object in getJobApplications - %v\n", err)
+
+		return
 	}
 
 	ctx.IndentedJSON(http.StatusOK, s.dbClient.GetApplications(query.Filterable, query.Sortable))
@@ -177,6 +186,8 @@ func (s *Server) insertJobApplication(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Printf("failed to bind object in insertJobApplication - %v\n", err)
+
 		return
 	}
 
@@ -196,4 +207,19 @@ func (s *Server) insertJobApplication(ctx *gin.Context) {
 	id := s.dbClient.InsertApplication(jobApplication, fileSaveLocation)
 
 	ctx.IndentedJSON(http.StatusCreated, gin.H{"message": fmt.Sprintf("received job application - %s", id)})
+}
+
+// updateApplicantsStatus updates the application status for applicants in the database.
+func (s *Server) updateApplicantsStatus(ctx *gin.Context) {
+	updateApplicantsStatus := &queries.UpdateApplicantsStatus{}
+
+	if err := ctx.ShouldBind(updateApplicantsStatus); err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Printf("failed to bind object in updateApplicantsStatus - %v\n", err)
+
+		return
+	}
+
+	s.dbClient.SetApplicantsStatus(updateApplicantsStatus.Users, updateApplicantsStatus.StatusID)
+	ctx.IndentedJSON(http.StatusCreated, gin.H{"message": "updated applicants"})
 }

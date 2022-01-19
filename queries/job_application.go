@@ -17,3 +17,9 @@ type PostJobApplication struct {
 	Phone     string   `form:"phone" json:"phone"`
 	Labels    []string `form:"labels" json:"labels"`
 }
+
+// UpdateApplicantsStatus presents the members of POST status request.
+type UpdateApplicantsStatus struct {
+	Users    []string `form:"user" json:"user"`
+	StatusID int      `form:"status" json:"status"`
+}
