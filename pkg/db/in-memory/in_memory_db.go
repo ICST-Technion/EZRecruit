@@ -180,7 +180,7 @@ func (db *DB) SetApplicantsStatus(users []string, status int) {
 
 	for _, user := range users {
 		if application, found := db.jobApplicationsMap[user]; found {
-			application.Status = datatypes.StatusIDToHebrewString(status)
+			application.Status = strconv.Itoa(status)
 			// update status label, it is the first (check InsertApplication)
 			application.Labels = append([]string{fmt.Sprintf("status:%s", application.Status)},
 				application.Labels[1:]...) // size is at least 2 due to the label insertions in insertion func.
