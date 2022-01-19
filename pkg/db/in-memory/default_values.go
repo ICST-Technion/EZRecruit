@@ -9,6 +9,7 @@ import (
 
 const gForm = "https://docs.google.com/forms/d/e/1FAIpQLSdotIRtdK9qfTQ41ZfmckWV5GiA_c0_TRuIXtMiyJYANLwE3A/viewform"
 
+//nolint
 func getDefaultJobListings() []datatypes.JobListing {
 	return []datatypes.JobListing{
 		{
@@ -56,30 +57,101 @@ func getDefaultJobListings() []datatypes.JobListing {
 				},
 			},
 		},
+		{
+			ID: "3",
+			PostJobListing: queries.PostJobListing{
+				Title:       "Engineer3",
+				Description: "This is an engineer job.",
+				Location:    "Haifa",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"Can Code", "Technion Student",
+				},
+				Labels: []string{
+					"Engineer", "Technion", "Haifa", "Hi-tech",
+				},
+			},
+		},
+		{
+			ID: "4",
+			PostJobListing: queries.PostJobListing{
+				Title:       "QA4",
+				Description: "This is a QA job.",
+				Location:    "Tel-Aviv",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"TAU Student",
+				},
+				Labels: []string{
+					"QA", "Hi-tech", "Tel-Aviv", "TAU",
+				},
+			},
+		},
+		{
+			ID: "5",
+			PostJobListing: queries.PostJobListing{
+				Title:       "Designer5",
+				Description: "This is a designer job.",
+				Location:    "Haifa",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"Frontend Dev",
+				},
+				Labels: []string{
+					"Designer", "Designing", "Haifa", "Frontend",
+				},
+			},
+		},
+		{
+			ID: "6",
+			PostJobListing: queries.PostJobListing{
+				Title:       "Engineer6",
+				Description: "This is an engineer job.",
+				Location:    "Haifa",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"Can Code", "Technion Student",
+				},
+				Labels: []string{
+					"Engineer", "Technion", "Haifa", "Hi-tech",
+				},
+			},
+		},
+		{
+			ID: "7",
+			PostJobListing: queries.PostJobListing{
+				Title:       "QA7",
+				Description: "This is a QA job.",
+				Location:    "Tel-Aviv",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"TAU Student",
+				},
+				Labels: []string{
+					"QA", "Hi-tech", "Tel-Aviv", "TAU",
+				},
+			},
+		},
+		{
+			ID: "8",
+			PostJobListing: queries.PostJobListing{
+				Title:       "Designer8",
+				Description: "This is a designer job.",
+				Location:    "Haifa",
+				FormLink:    gForm,
+				RequiredSkills: []string{
+					"Frontend Dev",
+				},
+				Labels: []string{
+					"Designer", "Designing", "Haifa", "Frontend",
+				},
+			},
+		},
 	}
 }
 
+//nolint
 func getDefaultApplications() []datatypes.JobApplication {
-	return append(getDefaultApplicationsPart1(), getDefaultApplicationsPart2()...)
-}
-
-func getStatusLabel(hebrewStatus string) string {
-	statusMap := map[string]int{
-		"חדש":                 datatypes.New,
-		"מייל שכר":            datatypes.OfferSent,
-		"ראיון טלפוני":        datatypes.PhoneInterview,
-		"ראיון פרונטלי ראשון": datatypes.FirstFrontalInterview,
-		"ראיון פרונטלי שני":   datatypes.SecondFrontalInterview,
-		"משימה":               datatypes.Task,
-		"נדחה":                datatypes.Rejected,
-		"להציע תפקיד אחר":     datatypes.ProposeAnotherJob,
-	}
-
-	return fmt.Sprintf("status:%d", statusMap[hebrewStatus])
-}
-
-// for linters.
-func getDefaultApplicationsPart1() []datatypes.JobApplication {
 	return []datatypes.JobApplication{
 		{
 			ID: "0",
@@ -126,11 +198,6 @@ func getDefaultApplicationsPart1() []datatypes.JobApplication {
 				},
 			},
 		},
-	}
-}
-
-func getDefaultApplicationsPart2() []datatypes.JobApplication {
-	return []datatypes.JobApplication{
 		{
 			ID: "3",
 			PostJobApplication: queries.PostJobApplication{
@@ -177,4 +244,19 @@ func getDefaultApplicationsPart2() []datatypes.JobApplication {
 			},
 		},
 	}
+}
+
+func getStatusLabel(hebrewStatus string) string {
+	statusMap := map[string]int{
+		"חדש":                 datatypes.New,
+		"מייל שכר":            datatypes.OfferSent,
+		"ראיון טלפוני":        datatypes.PhoneInterview,
+		"ראיון פרונטלי ראשון": datatypes.FirstFrontalInterview,
+		"ראיון פרונטלי שני":   datatypes.SecondFrontalInterview,
+		"משימה":               datatypes.Task,
+		"נדחה":                datatypes.Rejected,
+		"להציע תפקיד אחר":     datatypes.ProposeAnotherJob,
+	}
+
+	return fmt.Sprintf("status:%d", statusMap[hebrewStatus])
 }

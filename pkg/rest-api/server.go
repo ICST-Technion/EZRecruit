@@ -95,8 +95,8 @@ func (s *Server) getJobListings(ctx *gin.Context) {
 		return
 	}
 
-	if query.Pagination.Limit >= len(jobListings) {
-		ctx.IndentedJSON(http.StatusOK, jobListings) // result smaller than limit
+	if query.Pagination.Limit >= len(jobListings) { // result smaller than limit
+		ctx.IndentedJSON(http.StatusOK, datatypes.PaginatedResponse{Size: len(jobListings), Value: jobListings})
 		return
 	}
 
