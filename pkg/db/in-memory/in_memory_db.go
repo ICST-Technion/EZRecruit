@@ -13,18 +13,18 @@ import (
 
 // NewInMemoryDB returns a new instance of InMemoryDB.
 func NewInMemoryDB() *DB {
-	jobListingsMap := make(map[string]*datatypes.JobListing)
+	jobListingsMap := make(map[string]datatypes.JobListing)
 
 	for _, jobListing := range getDefaultJobListings() {
-		jobListingsMap[jobListing.ID] = &jobListing
+		jobListingsMap[jobListing.ID] = jobListing
 	}
 
-	jobApplicationsMap := make(map[string]*datatypes.JobApplication)
+	jobApplicationsMap := make(map[string]datatypes.JobApplication)
 
 	for _, jobApplication := range getDefaultApplications() {
 		// make label from status
 		jobApplication.Labels = append(jobApplication.Labels, getStatusLabel(jobApplication.Status))
-		jobApplicationsMap[jobApplication.User] = &jobApplication
+		jobApplicationsMap[jobApplication.User] = jobApplication
 	}
 
 	return &DB{
@@ -38,8 +38,8 @@ func NewInMemoryDB() *DB {
 
 // DB struct implements DB interface with in-memory logic.
 type DB struct {
-	jobListingsMap     map[string]*datatypes.JobListing
-	jobApplicationsMap map[string]*datatypes.JobApplication
+	jobListingsMap     map[string]datatypes.JobListing
+	jobApplicationsMap map[string]datatypes.JobApplication
 	userToResumeMap    map[string]string
 
 	availableListingID     int
@@ -61,7 +61,7 @@ func (db *DB) GetJobs(filterable *queries.Filterable, sortable *queries.Sortable
 			continue // not all labels match
 		}
 
-		jobListings = append(jobListings, *listing)
+		jobListings = append(jobListings, listing)
 	}
 
 	// sort result
@@ -92,7 +92,7 @@ func (db *DB) InsertJob(jobListing *datatypes.JobListing) string {
 		db.availableListingID++
 	}
 	// (rewrites if ID exists)
-	db.jobListingsMap[jobListing.ID] = jobListing
+	db.jobListingsMap[jobListing.ID] = *jobListing
 
 	return jobListing.ID
 }
@@ -129,7 +129,7 @@ func (db *DB) GetApplications(filterable *queries.Filterable, sortable *queries.
 			application.JobTitle = "archived"
 		}
 
-		jobApplications = append(jobApplications, *application)
+		jobApplications = append(jobApplications, application)
 	}
 
 	// sort result
@@ -165,7 +165,7 @@ func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication, resume
 			jobApplication.Labels...)
 	}
 	// (rewrites if ID exists)
-	db.jobApplicationsMap[jobApplication.User] = jobApplication
+	db.jobApplicationsMap[jobApplication.User] = *jobApplication
 
 	db.userToResumeMap[jobApplication.User] = resumeLocation
 
@@ -184,6 +184,8 @@ func (db *DB) SetApplicantsStatus(users []string, status int) {
 			// update status label, it is the first (check InsertApplication)
 			application.Labels = append([]string{fmt.Sprintf("status:%s", application.Status)},
 				application.Labels[1:]...) // size is at least 2 due to the label insertions in insertion func.
+
+			db.jobApplicationsMap[user] = application
 		}
 	}
 }
