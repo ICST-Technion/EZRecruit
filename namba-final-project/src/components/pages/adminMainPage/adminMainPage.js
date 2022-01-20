@@ -38,13 +38,11 @@ export const AdminMainPage = () => {
         <header className="App-header">
             <div className={"adminMainPage"}>
                 <h1>Admin MAIN page</h1>
-                <Button className="custom-btn" onClick={routeChangeToPollCreation} > Create a new poll </Button>
+                <Button className="custom-btn" onClick={routeChangeToPollCreation} > Create a new job </Button>
                 <br></br>
                 <Button className="custom-btn" onClick={routeChangeToPollResults} > See open jobs </Button>
                 <br></br>
-                <Button className="custom-btn" onClick={routeChangeToAddAdmin} > Add an admin </Button>
-                <br></br>
-                <Button className="custom-btn" onClick={routeChangeToUsersPage} > See users </Button>
+                <Button className="custom-btn" onClick={routeChangeToUsersPage} > See applicants </Button>
             </div>
         </header>
     )
