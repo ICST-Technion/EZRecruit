@@ -159,8 +159,7 @@ func (db *DB) InsertApplication(jobApplication *datatypes.JobApplication, resume
 		jobApplication.ID = strconv.Itoa(db.availableApplicationID)
 		db.availableApplicationID++
 		// append status ID to labels
-		jobApplication.Labels = append([]string{fmt.Sprintf("status:%s", jobApplication.Status)},
-			jobApplication.Labels...)
+		jobApplication.Labels = append([]string{getStatusLabel(jobApplication.Status)}, jobApplication.Labels...)
 		// append job ID to labels
 		jobApplication.Labels = append([]string{fmt.Sprintf("job:%s", jobApplication.JobId)}, jobApplication.Labels...)
 	}

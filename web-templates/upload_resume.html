@@ -6,13 +6,10 @@
 </head>
 <body style="background-color:powderblue;">
 <center>
-<form action="https://ezrecruit-backend-ryo2vcvbqq-uc.a.run.app/applications" enctype="multipart/form-data" method="POST">
-  <label for="job">Job ID:</label>
-  <input type="text" id="job" name="job"><br><br>
-  <label for="user">User:</label>
-  <input type="text" id="user" name="user"><br><br>
-  <label for="status">Status:</label>
-  <input type="text" id="status" name="firstName"><br><br>
+<form id="sub" action="https://ezrecruit-backend-ryo2vcvbqq-uc.a.run.app/applications" enctype="multipart/form-data" method="POST">
+  <input type="text" id="job" name="job" hidden><br><br>
+  <input type="text" id="user" name="user" hidden><br><br>
+  <input type="text" id="status" name="status" hidden><br><br>
   <label for="firstName">First Name:</label>
   <input type="text" id="firstName" name="firstName"><br><br>
   <label for="lastName">Last name:</label>
@@ -21,12 +18,37 @@
   <input type="text" id="email" name="email"><br><br>
   <label for="phone">Phone:</label>
   <input type="text" id="phone" name="phone"><br><br>
-  <label for="labels">Skills:</label>
+  <label for="labels">Labels:</label>
   <input type="text" id="labels" name="labels"><br><br>
 
   <input type="file" name="file" accept="*" />
-  <button type="submit">submit</button>
+  <button type="submit" id="submit" name="submit">submit</button>
 </form>
 </center>
 </body>
+<script type="text/javascript">
+  window.onmessage = (event) => {
+    if (event.data) {
+      let tokens = event.data.split(':');
+      document.getElementById(tokens[0]).value = tokens[1]
+    }
+  };
+</script>
+<script>
+  document.getElementById("submit").onclick = function(e) {
+    var labels = document.getElementById("labels").value.split(',');
+    if (labels.length > 0) {
+      // set first value
+      document.getElementById("labels").value = labels[0].trim()
+      let form = document.getElementById("sub")
+      for (var i = 1; i < labels.length; i++) {
+        const formField = document.createElement('input');
+        formField.type = 'hidden';
+        formField.name = 'labels';
+        formField.value = labels[i];
+        form.appendChild(formField);
+      }
+    }
+  }
+</script>
 </html>
