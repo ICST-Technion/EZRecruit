@@ -14,38 +14,30 @@ export const AllPollsTable = () => {
     const {setPollData} = useAppContext();
     const columns=[
         {
-            title: "poll_ID",
-            field: "poll_ID",
+            title: "jobTitle",
+            field: "title",
             headerFilter: true,
             width: 175
         },
         {
-            title: "question",
-            field: "question",
+            title: "jobDescription",
+            field: "description",
             headerFilter: true
         },
         {
-            title: "answers",
-            field: "answers",
+            title: "jobLocation",
+            field: "location",
             headerSort:false,
         },
-        {
-            title: "answers_counter",
+        /*{
+            title: "labels",
             field: "answers_counter",
             headerSort:false,
         },
         {
-            title: "multiple_choice",
+            title: "jobId",
             field: "multiple_choice",
-        },
-        {
-            title: "correct_answers",
-            field: "correct_answers",
-        },
-        {
-            title: "solution",
-            field: "solution",
-        },
+        },*/
     ]
 
 
