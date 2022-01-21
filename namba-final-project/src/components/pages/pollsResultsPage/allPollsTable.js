@@ -41,9 +41,9 @@ export const AllPollsTable = () => {
     ]
 
 
-
+//var url = 'https://ezrecruit-backend-ryo2vcvbqq-uc.a.run.app/' + 'jobs'
     function getData() {
-        httpClient.get(APIBase + "/all_polls_data")
+        httpClient.get("https://ezrecruit-backend-ryo2vcvbqq-uc.a.run.app/jobs")
             .then(res => {
                 console.log(res["data"]);
                 let count = Object.keys(res["data"]).length;
