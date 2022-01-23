@@ -4,10 +4,12 @@ import {getJobs} from 'backend/Modules/Jobs/getJobs';
 import wixUsers from 'wix-users';
 import wixWindow from 'wix-window';
 import {local} from 'wix-storage';
+const jobLimit = 6;
 
 $w.onReady(function () {
 	// admin user perms
 	//setTypeOfInput();
+	$w("#jobsPagination").currentPage = 1;
 	wixUsers.currentUser.getRoles()
 	.then((roles) => {
 		const currentUser = wixUsers.currentUser;
@@ -17,6 +19,7 @@ $w.onReady(function () {
 			$w('#button16').show();
 		}
 	});
+
 	// set jobsRepeater callback
 	$w("#jobsRepeater").onItemReady( ($item, itemData, index) => {
     		$item("#jobTitle").text = itemData.title;
@@ -30,18 +33,15 @@ $w.onReady(function () {
 	refreshJobs()
 
   //puts the job options in the dropdown menu
-  getJobs().then(jobInfo => {
+  getJobs("",jobLimit,0).then(jobInfo => {
     let jobsInfo = jobInfo
     let jobsDropdownOptions = []
     for(let i in jobsInfo) {
       let option = {"label": jobsInfo[i].title, "value": jobsInfo[i]._id}
       jobsDropdownOptions.push(option);
     }
-    $w("#jobDropDown").options = jobsDropdownOptions
+	$w("#jobsPagination").totalPages = Math.ceil(jobInfo.size / jobLimit);
 	})
-
-	$w("#jobsPagination").currentPage = 1;
-
 
 });
 
@@ -49,9 +49,11 @@ $w.onReady(function () {
 
 export function refreshJobs() {
 	// fetch jobs into repeater
-	getJobs().then(jobInfo => {
-    	$w("#jobsRepeater").data = []
+	getJobs($w("#searchJobInput").value,jobLimit,$w("#jobsPagination").currentPage-1).then(jobInfo => {
+		console.log("line 56.  " + jobInfo)
+    	$w("#jobsRepeater").data = [];
 		$w("#jobsRepeater").data = jobInfo.value;
+		$w("#jobsPagination").totalPages = Math.ceil(jobInfo.size / jobLimit);
 	})
 }
 
@@ -64,7 +66,7 @@ export function deleteJob_click(event, $w) {
 	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
 	// Add your code for this event here:
 	local.setItem("jobToDelete", $w("#jobId").text)
-  console.log($w("#jobId").text)
+  	console.log($w("#jobId").text)
 	wixWindow.openLightbox("DeleteJob").then(() => {
 		refreshJobs();
 	});
@@ -91,10 +93,11 @@ export function AddJobButton_click(event) {
 export function searchJobsButton_click(event) {
 	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
 	// Add your code for this event here:
-	getJobs($w("#searchJobInput").value).then(jobInfo => {
+	/*getJobs($w("#searchJobInput").value).then(jobInfo => {
     	$w("#jobsRepeater").data = []
 		$w("#jobsRepeater").data = jobInfo;
-	})
+	})*/
+	refreshJobs()
 }
 
 /**
@@ -115,4 +118,28 @@ export function searchJobInput_change(event) {
 export function jobsPagination_change(event) {
 	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
 	// Add your code for this event here:
+	refreshJobs()
+}
+
+/**
+*	Adds an event handler that runs when the element is clicked.
+	[Read more](https://www.wix.com/corvid/reference/$w.ClickableMixin.html#onClick)
+*	 @param {$w.MouseEvent} event
+*/
+export function jobsPagination_click(event) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here:
+	refreshJobs()
+}
+
+/**
+*	Adds an event handler that runs when the element is clicked.
+	[Read more](https://www.wix.com/corvid/reference/$w.ClickableMixin.html#onClick)
+*	 @param {$w.MouseEvent} event
+*/
+export function tempApplyJobButton_click(event, $w) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here:
+	local.setItem("job", $w("#jobId").text)
+	wixWindow.openLightbox("tempApplyJob");
 }

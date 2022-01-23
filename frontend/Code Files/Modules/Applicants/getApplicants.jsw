@@ -27,10 +27,13 @@ import {fetch} from 'wix-fetch';
 import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
 // Sample backend code in a multiplication.jsw file:
 
-export function getApplicants(filterLabel, sortLabel, jobID) {
+export function getApplicants(filterLabel, sortLabel, jobID, status) {
     var parameters = [""]
     if (jobID != undefined && jobID != null && jobID != "") {
         parameters[0] += "filterBy=job:" + jobID + '&'
+    }
+    if (status != undefined && status != null && status != "") {
+        parameters[0] += "filterBy=status:" + status + '&'
     }
     if (filterLabel != undefined && filterLabel != null && filterLabel != "") {
         filterLabel = filterLabel.trim().split(/\s*,\s*/)
@@ -44,8 +47,6 @@ export function getApplicants(filterLabel, sortLabel, jobID) {
             parameters[0] += "sortBy=" + sortLabel[i] + '&'
         }
     }
-    console.log(parameters[0])
-
 
 	return getBackendURL('applications', parameters).then(restAPI =>
         fetch(restAPI, {method: 'GET'}).then(response =>
