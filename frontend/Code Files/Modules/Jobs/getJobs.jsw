@@ -2,26 +2,28 @@ import {fetch} from 'wix-fetch';
 import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
 
 // getJobs permforms GET on jobs, returns collection of job jsons.
-export function getJobs(label) {
-    var parameters = []
-    
-    /*if (label != undefined && label != null) {
-        parameters = ["labels=" + label]
-    }*/
+export function getJobs(label, limit, offset) {
+    var parameters = [""]
 
-    if (label != undefined && label != null) {
+    if (label != undefined && label != null && label != "") {
         label = label.trim().split(/\s*,\s*/)
-        parameters = ["filterBy=" + label[0]]
+        parameters[0] += "filterBy=" + label[0]
         for (let i = 1; i < label.length; i++) {
             parameters[0] += "&filterBy=" + label[i];
         }
     }
-    if (label != undefined && label != null) {
-        label = label.trim().split(/\s*,\s*/)
+    if (label != undefined && label != null && label != "") {
+        //label = label.trim().split(/\s*,\s*/)
         parameters[0] += "&sortBy=" + label[0]
         for (let i = 1; i < label.length; i++) {
             parameters[0] += "&sortBy=" + label[i];
         }
+    }
+    if (offset != undefined && offset != null && offset != ""){
+        parameters[0] += "&offset=" + offset
+    }
+    if (limit != undefined && limit != null){
+        parameters[0] += "&limit=" + limit
     }
 
 	return getBackendURL('jobs', parameters).then(restAPI =>
