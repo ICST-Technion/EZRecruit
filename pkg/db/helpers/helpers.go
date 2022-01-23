@@ -36,13 +36,13 @@ func GetIntersectionSize(slice1, slice2 []string) int {
 	hitMap := make(map[string]struct{}, len(slice1))
 
 	for _, elem := range slice1 {
-		hitMap[elem] = struct{}{}
+		hitMap[strings.ToLower(elem)] = struct{}{}
 	}
 
 	hits := 0
 
 	for _, elem := range slice2 {
-		if _, found := hitMap[elem]; found {
+		if _, found := hitMap[strings.ToLower(elem)]; found {
 			hits++
 		}
 	}
