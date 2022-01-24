@@ -1,0 +1,11 @@
+.NotFound {
+  padding-top: 100px;
+}
+
+.HomeLink{
+  color: #ffffff;
+}
+
+.HomeLink:hover{
+  color: #ffd51c;
+}

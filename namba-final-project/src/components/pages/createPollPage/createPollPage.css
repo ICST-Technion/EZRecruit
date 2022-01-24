@@ -1,0 +1,9 @@
+.longShot{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.form{
+    align-content: center;
+}
