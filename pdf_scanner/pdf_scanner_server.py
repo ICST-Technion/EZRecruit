@@ -4,6 +4,7 @@ import logging
 import re
 logging.basicConfig(level=logging.INFO)
 import sys
+import codecs
 
 path = "C:/Users/aradk/Desktop/Yearly_Project/aa.pdf"
 search_for = "איש"
@@ -30,19 +31,69 @@ def get_language_and_word(lng, search_for):
     search_for = input()
 
 
-"""
-    Gets 2 arguments- a pdf path and a language (usually 'heb' or 'eng') and returns
-    the words from this language in this pdf as a string.
-"""
-def main():
+def output_pdf(path, lng, search=False):
+    '''search = False
     #get_path_from_user(path)
     #get_language_and_word(lng, search_for)
-    if len(sys.argv) != 3:
+    if len(sys.argv) == 3:
+        search = False
+    elif len(sys.argv) == 4:
+        search = True
+    else:
         print("Wrong number of arguments")
         exit(-1)
 
     path = sys.argv[1]
     lng = sys.argv[2]
+    if search == True:
+        search_for = sys.argv[3]
+    '''
+    #print("args are: " + path + "  " + lng)
+
+    ## create document for extraction with configurations
+    pdf_document = Document(
+        document_path=path,
+        language=lng
+        )
+    pdf2text = PDF2Text(document=pdf_document)
+    content = pdf2text.extract()
+    str = content[0]['text']
+
+    if search == False:
+        f = codecs.open("demo.txt", "w", "utf-8")
+        #print(str)
+        f.write(str)
+        f.close()
+        return str
+
+    print("\n\n\n*************************************\n")
+    if (findWholeWord(search_for)(str)) != None:
+        print("PDF contains the word")
+    else:
+        print("PDF does not contain the word")
+    print("\n*************************************\n\n")
+    return str
+
+"""
+    Gets 2 arguments- a pdf path and a language (usually 'heb' or 'eng') and returns
+    the words from this language in this pdf as a string.
+"""
+def main():
+    search = False
+    #get_path_from_user(path)
+    #get_language_and_word(lng, search_for)
+    if len(sys.argv) == 3:
+        search = False
+    elif len(sys.argv) == 4:
+        search = True
+    else:
+        print("Wrong number of arguments")
+        exit(-1)
+
+    path = sys.argv[1]
+    lng = sys.argv[2]
+    if search == True:
+        search_for = sys.argv[3]
 
     #print("args are: " + path + "  " + lng)
 
@@ -54,13 +105,22 @@ def main():
     pdf2text = PDF2Text(document=pdf_document)
     content = pdf2text.extract()
     str = content[0]['text']
-    #print(str)
-    return str
-    """if (findWholeWord(search_for)(str)) != None:
-        print("Found word")
+
+    if search == False:
+        f = codecs.open("demo.txt", "w", "utf-8")
+        print(str)
+        f.write(str)
+        f.close()
+        return str
+
+    print("\n\n\n*************************************\n")
+    if (findWholeWord(search_for)(str)) != None:
+        print("PDF contains the word")
     else:
-        print("Did not find word")
-    #print(content[0]['text'])"""
+        print("PDF does not contain the word")
+    print("\n*************************************\n\n")
+    return str
+    #print(content[0]['text'])
 
 if __name__ == "__main__":
     main()
