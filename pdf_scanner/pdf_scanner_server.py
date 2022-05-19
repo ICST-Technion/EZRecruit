@@ -57,6 +57,7 @@ def output_pdf(path, lng, search=False):
         )
     pdf2text = PDF2Text(document=pdf_document)
     content = pdf2text.extract()
+    # str contains the file as a string
     str = content[0]['text']
 
     if search == False:
@@ -114,6 +115,7 @@ def main():
         return str
 
     print("\n\n\n*************************************\n")
+    temp = findWholeWord(search_for)
     if (findWholeWord(search_for)(str)) != None:
         print("PDF contains the word")
     else:
