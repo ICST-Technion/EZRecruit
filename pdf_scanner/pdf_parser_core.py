@@ -3,6 +3,8 @@ from multilingual_pdf2text.models.document_model.document import Document
 import re
 import os
 
+lng = "heb"
+
 """
     # TODO: core functions
     Single CV:
@@ -13,10 +15,24 @@ import os
     - check all CV's in the directory for words
 """
 
+"""
+    Concat the strings from a given pdf file:
+    @param content: list of pages data
+
+    @return: a single string contains all pages data
+"""
+def concatPagesStrings(content):
+    wholeFileString = ""
+    for page in content:
+        wholeFileString += page['text']
+    return wholeFileString
+
+
 
 """
     Tries to find a word in a CV:
     @param word: the word to search
+
     @return: regex function
 """
 def findSpecificWord(word):
@@ -27,6 +43,7 @@ def findSpecificWord(word):
     Find a batch of words in a given CV
     @param wordsList [List[string]]: List of words to search for
     @param cv [string]: CV to search 
+
     @return hitsCount [int]: Number of hits
 """
 def findWords(wordsList, cv):
@@ -38,11 +55,32 @@ def findWords(wordsList, cv):
     return hitsCount
 
 
+"""
+    Search for matching words in all files (CV's) in a given directory
+    @param folderPath: the path (TODO: check if global only) of the directory
+    @param wordsList: a wordsList of words to search
+    
+    @return: a list of tuples (file, hitsCount) sorted by hitsCount backwords
+"""
 def searchCVsInFolder(folderPath, wordsList):
+    resultsList = []
+
     # iterate over the Cv's in folder
     for filename in os.listdir(folderPath):
         f = os.path.join(folderPath, filename)
-        # checking if it's a file (a CV)
-        if os.path.isfile(f):
-            hitsCount = findWords
+        # checking if it's a pdf file (a CV)
+        if os.path.isfile(f) and f.endswith(".pdf"):
+            pdf_document = Document(
+                document_path=f,
+                language=lng
+                )
+            pdf2text = PDF2Text(document=pdf_document)
+            content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
+            data = concatPagesStrings(content)
+            hitsCount = findWords(wordsList, data)
+            resultsList.append((filename,hitsCount))
+    
+    # sort the list by hitsCount
+    resultsList.sort(key=lambda tup: tup[1], reverse=True)
+    return resultsList
 
