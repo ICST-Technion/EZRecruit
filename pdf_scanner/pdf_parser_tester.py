@@ -2,7 +2,6 @@ from multilingual_pdf2text.pdf2text import PDF2Text
 from multilingual_pdf2text.models.document_model.document import Document
 import pathlib
 from re import M
-from unicodedata import name
 from pdf_parser_core import *
 
 

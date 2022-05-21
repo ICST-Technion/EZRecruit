@@ -45,14 +45,18 @@ def findSpecificWord(word):
     @param cv [string]: CV to search 
 
     @return hitsCount [int]: Number of hits
+            hitWords [dict(word -> Boolean)]: words and a boolean indicating if there was a match
 """
 def findWords(wordsList, cv):
     hitsCount = 0
+    hitWords = {}
     for word in wordsList:
+        hitWords[word] = False
         result = findSpecificWord(word)(cv)
         if (result != None):
             hitsCount += 1
-    return hitsCount
+            hitWords[word] = True
+    return hitsCount, hitWords
 
 
 """
@@ -77,8 +81,8 @@ def searchCVsInFolder(folderPath, wordsList):
             pdf2text = PDF2Text(document=pdf_document)
             content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
             data = concatPagesStrings(content)
-            hitsCount = findWords(wordsList, data)
-            resultsList.append((filename,hitsCount))
+            hitsCount, hitWords = findWords(wordsList, data)
+            resultsList.append((filename, hitsCount, hitWords))
     
     # sort the list by hitsCount
     resultsList.sort(key=lambda tup: tup[1], reverse=True)
