@@ -3,7 +3,7 @@ from multilingual_pdf2text.models.document_model.document import Document
 import re
 import os
 
-lng = "heb"
+lng = "heb" # the language of the CV's, now the default is hebrew
 
 """
     # TODO: core functions
