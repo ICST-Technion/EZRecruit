@@ -29,6 +29,25 @@ def concatPagesStrings(content):
     return wholeFileString
 
 
+"""
+    Extract data from a pdf file
+    @param filePath: the path for the file to
+
+    @return: the extracted data as string
+"""
+def extractDataFromFile(filePath):
+    if os.path.isfile(filePath) and filePath.endswith(".pdf"):
+        pdf_document = Document(
+            document_path=filePath,
+            language=lng
+            )
+        pdf2text = PDF2Text(document=pdf_document)
+        content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
+        data = concatPagesStrings(content)
+        return data
+    else: 
+        return None
+
 
 """
     Tries to find a word in a CV:
@@ -74,16 +93,11 @@ def searchCVsInFolder(folderPath, wordsList):
     for filename in os.listdir(folderPath):
         f = os.path.join(folderPath, filename)
         # checking if it's a pdf file (a CV)
-        if os.path.isfile(f) and f.endswith(".pdf"): # TODO: check word file possibility
-            pdf_document = Document(
-                document_path=f,
-                language=lng
-                )
-            pdf2text = PDF2Text(document=pdf_document)
-            content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
-            data = concatPagesStrings(content)
-            hitsCount, hitWords = findWords(wordsList, data)
-            resultsList.append((filename, hitsCount, hitWords))
+        data = extractDataFromFile(f)
+        if data is None:
+            continue
+        hitsCount, hitWords = findWords(wordsList, data)
+        resultsList.append((filename, hitsCount, hitWords))
     
     # sort the list by hitsCount
     resultsList.sort(key=lambda tup: tup[1], reverse=True)
@@ -98,13 +112,36 @@ def searchCVsInFolder(folderPath, wordsList):
     @return: num of hits and a dict of words:boolean indicating match results 
 """
 def searchSingleCv(filePath, wordsList):
-    if os.path.isfile(filePath) and filePath.endswith(".pdf"):
-        pdf_document = Document(
-            document_path=filePath,
-            language=lng
-            )
-        pdf2text = PDF2Text(document=pdf_document)
-        content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
-        data = concatPagesStrings(content)
-        hitsCount, hitWords = findWords(wordsList, data)
-        return hitsCount, hitWords
+    data = extractDataFromFile(filePath)
+    if data is None:
+        return None
+    hitsCount, hitWords = findWords(wordsList, data)
+    return hitsCount, hitWords
+
+
+
+"""
+TODO: this method is stil very basic and should be improved (using regex and more...)
+
+    Return mapping of words to number of appearances in the file
+    @param filePath: the path of the file
+    
+    @return: a dictionary mapping words to number of appearances 
+"""
+def getMappingOfWordsInCV(filePath):
+    data = extractDataFromFile(filePath)
+    if data is None:
+        return None
+    wordMapping = {}
+    data = data.replace('\n',' ').split(' ')
+    for word in data:
+        if word in wordMapping:
+            counter = int(wordMapping[word])
+            wordMapping[word] = counter + 1
+        else:
+            wordMapping[word] = 1
+    
+    # print(wordMapping)
+    return wordMapping
+
+

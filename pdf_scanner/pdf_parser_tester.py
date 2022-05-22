@@ -88,10 +88,16 @@ def fileExplorerTest():
             o.write("----------------------------------------------------------------\n")
     
 
-    
+def testMapping():
+    filePath = "C:/technion/semester_8/EZRecruit/pdf_scanner/daniel.pdf"
+    wordMapping = getMappingOfWordsInCV(filePath)
+    o_path = "C:/technion/semester_8/EZRecruit/pdf_scanner/text_outputs/mapping.txt"
+    with codecs.open(o_path, "w", "utf-8") as o:
+        o.write(str(wordMapping))
 
 
 if __name__ ==  "__main__":
     # main()
     # testDirSearch()
-    fileExplorerTest()
+    # fileExplorerTest()
+    testMapping()
