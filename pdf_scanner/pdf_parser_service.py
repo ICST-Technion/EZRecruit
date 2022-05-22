@@ -1,7 +1,7 @@
 from tokenize import String
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
-from pdf_parser_core import searchCVsInFolder
+from pdf_parser_core import searchCVsInFolder, getMappingOfWordsInCV
 import json
 
 
@@ -47,9 +47,27 @@ class CVs(Resource):
         
         return json.dumps(cvsList, ensure_ascii=False), 200
         
+class Mappings(Resource):
+    """def get(self, path):
+        print(path)
+        wordMapping = getMappingOfWordsInCV(path)
+        return wordMapping, 200"""
 
+    def post(self):
+        # TODO: implement 
+        parser = reqparse.RequestParser()
+        parser.add_argument('pathToFile',required=False)
+
+        args = parser.parse_args()
+        path = args['pathToFile']
+
+        wordMapping = getMappingOfWordsInCV(path)
+
+        return wordMapping, 200
 
 api.add_resource(CVs, '/cvs')  # '/users' is our entry point
+# api.add_resource(Mappings, '/mappings/<string:path>')
+api.add_resource(Mappings, '/mappings')
 
 
 if __name__ == '__main__':
