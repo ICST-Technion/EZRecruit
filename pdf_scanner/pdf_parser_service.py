@@ -54,7 +54,6 @@ class Mappings(Resource):
         return wordMapping, 200"""
 
     def post(self):
-        # TODO: implement 
         parser = reqparse.RequestParser()
         parser.add_argument('pathToFile',required=False)
 
