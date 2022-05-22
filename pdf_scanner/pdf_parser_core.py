@@ -10,6 +10,7 @@ lng = "heb" # the language of the CV's, now the default is hebrew
     Single CV:
     - check if a specific (single) word is in CV
     - check if multiple words are in CV - return number of words found
+    - TODO: return mapping of words in a CV {word: numOfAppearances}
 
     Directory:
     - check all CV's in the directory for words
@@ -64,7 +65,7 @@ def findWords(wordsList, cv):
     @param folderPath: the path (TODO: check if global only) of the directory
     @param wordsList: a wordsList of words to search
     
-    @return: a list of tuples (file, hitsCount) sorted by hitsCount backwords
+    @return: a list of tuples (file, hitsCount, hitWords) sorted by hitsCount backwords
 """
 def searchCVsInFolder(folderPath, wordsList):
     resultsList = []
@@ -73,7 +74,7 @@ def searchCVsInFolder(folderPath, wordsList):
     for filename in os.listdir(folderPath):
         f = os.path.join(folderPath, filename)
         # checking if it's a pdf file (a CV)
-        if os.path.isfile(f) and f.endswith(".pdf"):
+        if os.path.isfile(f) and f.endswith(".pdf"): # TODO: check word file possibility
             pdf_document = Document(
                 document_path=f,
                 language=lng
@@ -88,3 +89,22 @@ def searchCVsInFolder(folderPath, wordsList):
     resultsList.sort(key=lambda tup: tup[1], reverse=True)
     return resultsList
 
+
+"""
+    Search for matching words in a given file (CV)
+    @param filePath: the path of the file
+    @param wordsList: a wordsList of words to search
+    
+    @return: num of hits and a dict of words:boolean indicating match results 
+"""
+def searchSingleCv(filePath, wordsList):
+    if os.path.isfile(filePath) and filePath.endswith(".pdf"):
+        pdf_document = Document(
+            document_path=filePath,
+            language=lng
+            )
+        pdf2text = PDF2Text(document=pdf_document)
+        content = pdf2text.extract() # get the content of all pages in the file: list of dictionaries [{}]
+        data = concatPagesStrings(content)
+        hitsCount, hitWords = findWords(wordsList, data)
+        return hitsCount, hitWords
