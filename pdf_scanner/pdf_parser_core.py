@@ -6,7 +6,7 @@ import os
 lng = "heb" # the language of the CV's, now the default is hebrew
 
 """
-    # TODO: core functions
+    core functions
     Single CV:
     - check if a specific (single) word is in CV
     - check if multiple words are in CV - return number of words found

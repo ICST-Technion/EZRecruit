@@ -1,9 +1,8 @@
 from tokenize import String
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
-from pdf_parser_core import *
-import ast
-import re
+from pdf_parser_core import searchCVsInFolder
+import json
 
 
 app = Flask(__name__)
@@ -25,14 +24,15 @@ class CVs(Resource):
     def post(self):
         parser = reqparse.RequestParser()
 
-        parser.add_argument('pathToDir',required=False)
-        parser.add_argument('wordsList',required=False)
+        parser.add_argument('pathToDir',required=True)
+        parser.add_argument('wordsList',required=True)
 
         args = parser.parse_args()
         # print(args)
         # print(args['pathToDir'])
         # print(args['wordsList'])
-        path = {'path': args['pathToDir']}
+        path = args['pathToDir']
+        # print(path)
         wordsList = []
 
         wordsListStr = args['wordsList']
@@ -42,10 +42,10 @@ class CVs(Resource):
         for pair in wordsListPairs:
             word:String = pair.split(':')[0].strip()[1:-1]
             wordsList.append(word)
+
+        cvsList = searchCVsInFolder(path, wordsList)
         
-        # TODO: sacn the pdfs for words
-        
-        return {}, 200
+        return json.dumps(cvsList, ensure_ascii=False), 200
         
 
 
