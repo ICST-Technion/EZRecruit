@@ -11,7 +11,7 @@ sg.theme('BlueMono')    # Keep things interesting for your users
 API_ENDPOINT = "http://localhost:5000/cvs"
 
 
-def buildJsonForSingleFileReq(filePath, wordsListString):
+def buildJsonForReq(filePath, wordsListString):
     jsonForReq = {}
     jsonForReq["pathToDir"] = filePath
     wordsList = wordsListString.split(',')
@@ -30,6 +30,14 @@ def printResults(outputWindow, data):
         fullString += "----------------------------------------------------------------\n"
     outputWindow.update(fullString)
 
+def loadingWindow():
+    layout = [
+        [
+            sg.Text("Loading...")
+        ]
+    ]
+    window = sg.Window(title="", layout=layout)
+    return window
 
 
 def dirSearchWindow():
@@ -40,16 +48,20 @@ def dirSearchWindow():
         sg.FolderBrowse(),
     ],
     [
-        sg.Listbox(
-            values=[], enable_events=True, size=(40, 20), key="-FILE LIST-"
-        )
+        sg.Text('Words List'),
+        sg.InputText(size=(30, 1), enable_events=True, key="-WordsList-"),
     ],
+    [
+        sg.Listbox(
+            values=[], enable_events=True, size=(40, 20), key="-FILE LIST-")
+    ],
+    [
+        sg.Column([[sg.Button("Scan", key="-SCAN-")]], justification='center')
+    ]
 ]
 
     image_viewer_column = [
-        [sg.Text("Choose an image from list on left:")],
-        [sg.Text(size=(40, 1), key="-TOUT-")],
-        [sg.Image(key="-IMAGE-")],
+        [sg.Multiline(size=(50,30), key="-OUTPUT-")]
     ]
 
 
@@ -83,18 +95,16 @@ def dirSearchWindow():
                 and f.lower().endswith((".pdf"))
             ]
             window["-FILE LIST-"].update(fnames)
-        elif event == "-FILE LIST-":  # A file was chosen from the listbox
-            pass
-            """try:
-                filename = os.path.join(
-                    values["-FOLDER-"], values["-FILE LIST-"][0]
-                )
-                window["-TOUT-"].update(filename)
-                window["-IMAGE-"].update(filename=filename)
+        elif event == "-SCAN-":
+            try:
+                dirPath = values["-FOLDER-"]
+                wordsList = values["-WordsList-"]
+                jsonForReq = buildJsonForReq(dirPath, wordsList)
+                r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
+                data = json.loads(r.json())
+                printResults(window["-OUTPUT-"], data)
             except:
-                print("whoops")
-                pass"""
-
+                print("ERROR IN PARSING")
     window.close()
 
 def fileSearchWindow():
@@ -107,7 +117,7 @@ def fileSearchWindow():
     [
         sg.Text('Words List'),
         # sg.In(size=(25, 1), enable_events=True, key="-WordsList-"),
-        sg.InputText(size=(25, 1), enable_events=True, key="-WordsList-"),
+        sg.InputText(size=(30, 1), enable_events=True, key="-WordsList-"),
         # sg.Button("Button", key="-PRESSED-")
     ],
     [
@@ -122,8 +132,7 @@ def fileSearchWindow():
 
     image_viewer_column = [
         [sg.Text("Choose a file from list on left:")],
-        [sg.Text(size=(40, 1), key="-TOUT-")],
-        [sg.Text(key="CV-RESULTS")],
+        [sg.Text(size=(45, 1), key="-TOUT-")],
         [sg.Multiline(size=(50,10), key="-OUTPUT-")]
     ]
 
@@ -176,7 +185,7 @@ def fileSearchWindow():
                 # print("filePath: " + filePath)
                 wordsList = values["-WordsList-"]
                 # print("wordsList: " + wordsList)
-                jsonForReq = buildJsonForSingleFileReq(filePath, wordsList)
+                jsonForReq = buildJsonForReq(filePath, wordsList)
                 r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
                 data = json.loads(r.json())
                 # print(data)
