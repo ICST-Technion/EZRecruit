@@ -1,7 +1,7 @@
 from tokenize import String
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
-from pdf_parser_core import searchCVsInFolder, getMappingOfWordsInCV
+from pdf_parser_core import searchCVsInFolder, getMappingOfWordsInCV, searchSingleCv
 import json
 
 
@@ -42,8 +42,11 @@ class CVs(Resource):
         for pair in wordsListPairs:
             word:String = pair.split(':')[0].strip()[1:-1]
             wordsList.append(word)
-
-        cvsList = searchCVsInFolder(path, wordsList)
+        
+        if path.endswith('.pdf'):
+            cvsList = searchSingleCv(path,wordsList)
+        else:
+            cvsList = searchCVsInFolder(path, wordsList)
         
         return json.dumps(cvsList, ensure_ascii=False), 200
         
@@ -64,7 +67,7 @@ class Mappings(Resource):
 
         return wordMapping, 200
 
-api.add_resource(CVs, '/cvs')  # '/users' is our entry point
+api.add_resource(CVs, '/cvs')
 # api.add_resource(Mappings, '/mappings/<string:path>')
 api.add_resource(Mappings, '/mappings')
 

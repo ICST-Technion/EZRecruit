@@ -99,5 +99,5 @@ def testMapping():
 if __name__ ==  "__main__":
     # main()
     # testDirSearch()
-    # fileExplorerTest()
-    testMapping()
+    fileExplorerTest()
+    # testMapping()

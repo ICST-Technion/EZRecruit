@@ -115,8 +115,9 @@ def searchSingleCv(filePath, wordsList):
     data = extractDataFromFile(filePath)
     if data is None:
         return None
+    fileHead, fileName = os.path.split(filePath)
     hitsCount, hitWords = findWords(wordsList, data)
-    return hitsCount, hitWords
+    return [[fileName, hitsCount, hitWords]]
 
 
 
