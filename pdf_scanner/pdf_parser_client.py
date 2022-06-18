@@ -4,6 +4,7 @@ import json
 from fileinput import FileInput
 import PySimpleGUI as sg
 import os.path
+import subprocess
 
 # sg.theme_previewer()
 sg.theme('BlueMono')    # Keep things interesting for your users
@@ -30,6 +31,62 @@ def printResults(outputWindow, data):
         fullString += "----------------------------------------------------------------\n"
     outputWindow.update(fullString)
 
+def listBoxCvs(listBoxWindow, data, folder):
+    filesList = []
+    for cv in data:
+        filesList.append(cv[0])
+    listBoxWindow.update(filesList)
+
+def getLastFolder():
+    try:
+        file = open("chosen-folder.txt", "r")
+        folderpath = file.readline()
+        return folderpath
+    except:
+        return ""
+
+def setLastFolder(folderpath):
+    file = open("chosen-folder.txt", "w+")
+    file.write(folderpath)
+
+def getLastWordsList():
+    # TODO: fix problem with reading hebrew text files
+    try:
+        file = open("words-list.txt", "r")
+        # print("check")
+        wordsList = file.readline()
+        print(wordsList)
+        return wordsList
+    except:
+        # print("SHOT")
+        return ""
+
+def setLastWordsList(wordsList):
+    file = open("words-list.txt", "w+")
+    file.write(wordsList)
+
+def showListOfPdfFiles(window, folder):
+    window["-FOLDER-"].update(folder)
+    try:
+        # Get list of files in folder
+        file_list = os.listdir(folder)
+    except:
+        file_list = []
+
+    fnames = [
+        f
+        for f in file_list
+        if os.path.isfile(os.path.join(folder, f))
+        and f.lower().endswith((".pdf"))
+    ]
+    window["-FILE LIST-"].update(fnames)
+
+def initData(window):
+    window.Finalize()
+    showListOfPdfFiles(window, getLastFolder())
+    # window["-WordsList-"].update(getLastWordsList())
+    window.refresh()
+
 def loadingWindow():
     layout = [
         [
@@ -49,11 +106,10 @@ def dirSearchWindow():
     ],
     [
         sg.Text('Words List'),
-        sg.InputText(size=(30, 1), enable_events=True, key="-WordsList-"),
+        sg.Input(size=(30, 1), enable_events=True, key="-WordsList-"),
     ],
     [
-        sg.Listbox(
-            values=[], enable_events=True, size=(40, 20), key="-FILE LIST-")
+        sg.Listbox(values=[], enable_events=True, size=(40, 20), key="-FILE LIST-")
     ],
     [
         sg.Column([[sg.Button("Scan", key="-SCAN-")]], justification='center')
@@ -64,15 +120,22 @@ def dirSearchWindow():
         [sg.Multiline(size=(50,30), key="-OUTPUT-")]
     ]
 
+    cv_column = [
+        [sg.Listbox(values=[], select_mode="LISTBOX_SELECT_MODE_SINGLE",
+         enable_events=True, size=(40, 20), key="-CV LIST-")]
+    ]
 
     layout = [
         [
             sg.Column(file_list_column),
             sg.VSeperator(),
-            sg.Column(image_viewer_column)
+            sg.Column(image_viewer_column),
+            sg.VSeperator(),
+            sg.Column(cv_column)
         ]
     ]
     window = sg.Window(title="Pdf Parser", layout=layout)
+    initData(window)
     while True:
         event, values = window.read()
         # End program if user closes window or
@@ -82,19 +145,8 @@ def dirSearchWindow():
 
         if event == "-FOLDER-":
             folder = values["-FOLDER-"]
-            try:
-                # Get list of files in folder
-                file_list = os.listdir(folder)
-            except:
-                file_list = []
-
-            fnames = [
-                f
-                for f in file_list
-                if os.path.isfile(os.path.join(folder, f))
-                and f.lower().endswith((".pdf"))
-            ]
-            window["-FILE LIST-"].update(fnames)
+            showListOfPdfFiles(window, folder)
+            setLastFolder(folder)
         elif event == "-SCAN-":
             try:
                 dirPath = values["-FOLDER-"]
@@ -103,8 +155,12 @@ def dirSearchWindow():
                 r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
                 data = json.loads(r.json())
                 printResults(window["-OUTPUT-"], data)
+                listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
             except:
                 print("ERROR IN PARSING")
+        elif event == "-CV LIST-":
+            filepath = os.path.join(values["-FOLDER-"], values["-CV LIST-"][0])
+            subprocess.Popen([filepath],shell=True)
     window.close()
 
 def fileSearchWindow():
@@ -136,12 +192,18 @@ def fileSearchWindow():
         [sg.Multiline(size=(50,10), key="-OUTPUT-")]
     ]
 
+    cv_column = [
+        [sg.Listbox(values=[], select_mode="LISTBOX_SELECT_MODE_SINGLE",
+         enable_events=True, size=(40, 20), key="-CV LIST-")]
+    ]
 
     layout = [
         [
             sg.Column(file_list_column),
             sg.VSeperator(),
-            sg.Column(image_viewer_column)
+            sg.Column(image_viewer_column),
+            sg.VSeperator(),
+            sg.Column(cv_column)
         ]
     ]
     window = sg.Window(title="Pdf Parser", layout=layout)
@@ -168,7 +230,6 @@ def fileSearchWindow():
             ]
             window["-FILE LIST-"].update(fnames)
         elif event == "-FILE LIST-":  # A file was chosen from the listbox
-            pass
             try:
                 filename = os.path.join(
                     values["-FOLDER-"], values["-FILE LIST-"][0]
@@ -177,7 +238,6 @@ def fileSearchWindow():
                 # window["-IMAGE-"].update(filename=filename)
             except:
                 print("whoops")
-                pass
         elif event == "-SCAN-":
             #print(values["-WordsList-"])
             try:
@@ -190,9 +250,13 @@ def fileSearchWindow():
                 data = json.loads(r.json())
                 # print(data)
                 printResults(window["-OUTPUT-"], data)
+                listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
                 # window["-OUTPUT-"].print(data)
             except:
                 print("ERROR IN PARSING")
+        elif event == "-CV LIST-":
+            filepath = os.path.join(values["-FOLDER-"], values["-CV LIST-"][0])
+            subprocess.Popen([filepath],shell=True)
             
 
     window.close()

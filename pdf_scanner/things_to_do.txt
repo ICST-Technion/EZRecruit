@@ -1,0 +1,3 @@
+how to automatically add environment variables:
+SETX
+and then restart the computer??? (probably yes)
