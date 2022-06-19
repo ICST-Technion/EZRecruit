@@ -50,19 +50,20 @@ def setLastFolder(folderpath):
     file.write(folderpath)
 
 def getLastWordsList():
-    # TODO: fix problem with reading hebrew text files
     try:
-        file = open("words-list.txt", "r")
-        # print("check")
-        wordsList = file.readline()
-        print(wordsList)
+        file = open("words-list.txt", "r", encoding="utf-8")
+        print("check")
+        wordsList = file.read()
+        # print(wordsList)
+        # wordsList = wordsList.decode("iso-8859-8")
+        # print(wordsList)
         return wordsList
     except:
         # print("SHOT")
         return ""
 
 def setLastWordsList(wordsList):
-    file = open("words-list.txt", "w+")
+    file = open("words-list.txt", "w+", encoding="utf-8")
     file.write(wordsList)
 
 def showListOfPdfFiles(window, folder):
@@ -85,7 +86,7 @@ def showListOfPdfFiles(window, folder):
 def initData(window):
     window.Finalize()
     showListOfPdfFiles(window, getLastFolder())
-    # window["-WordsList-"].update(getLastWordsList())
+    window["-WordsList-"].update(getLastWordsList())
     window.refresh()
 
 def loadingWindow():
@@ -152,6 +153,7 @@ def dirSearchWindow():
             try:
                 dirPath = values["-FOLDER-"]
                 wordsList = values["-WordsList-"]
+                setLastWordsList(wordsList)
                 jsonForReq = buildJsonForReq(dirPath, wordsList)
                 r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
                 data = json.loads(r.json())
@@ -235,6 +237,7 @@ def fileSearchWindow():
                 filePath = filename
                 # print("filePath: " + filePath)
                 wordsList = values["-WordsList-"]
+                setLastWordsList(wordsList)
                 # print("wordsList: " + wordsList)
                 jsonForReq = buildJsonForReq(filePath, wordsList)
                 r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
