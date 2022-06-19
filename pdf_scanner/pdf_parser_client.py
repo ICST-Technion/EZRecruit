@@ -67,6 +67,7 @@ def setLastWordsList(wordsList):
 
 def showListOfPdfFiles(window, folder):
     window["-FOLDER-"].update(folder)
+    window["-FOLDER-"].set_tooltip(folder)
     try:
         # Get list of files in folder
         file_list = os.listdir(folder)
@@ -207,6 +208,7 @@ def fileSearchWindow():
         ]
     ]
     window = sg.Window(title="Pdf Parser", layout=layout)
+    initData(window)
     while True:
         event, values = window.read()
         # End program if user closes window or
@@ -216,19 +218,8 @@ def fileSearchWindow():
 
         if event == "-FOLDER-":
             folder = values["-FOLDER-"]
-            try:
-                # Get list of files in folder
-                file_list = os.listdir(folder)
-            except:
-                file_list = []
-
-            fnames = [
-                f
-                for f in file_list
-                if os.path.isfile(os.path.join(folder, f))
-                and f.lower().endswith((".pdf"))
-            ]
-            window["-FILE LIST-"].update(fnames)
+            showListOfPdfFiles(window, folder)
+            setLastFolder(folder)
         elif event == "-FILE LIST-":  # A file was chosen from the listbox
             try:
                 filename = os.path.join(
