@@ -1,0 +1,4 @@
+Name: wordfile.docx
+Wordcount: 0
+Description: {'בוקר': False, 'טוב': False}
+----------------------------------------------------------------
