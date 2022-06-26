@@ -1,0 +1,33 @@
+import {fetch} from 'wix-fetch';
+import {getBackendURL} from 'backend/Modules/getBackendAddr.jsw'
+
+// insertJob performs POST on jobs to insert a job-listing json.
+export function insertJob(title, location, description, requiredSkills, labels, formLink) {
+	const splitSkills = requiredSkills.split(',');
+	const splitLabels = labels.split(',');
+
+    return getBackendURL('jobs', []).then(restAPI =>
+        fetch(restAPI,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        location: location,
+                        description: description,
+                        requiredSkills: splitSkills,
+                        labels: splitLabels,
+                        formLink: formLink
+                        })    
+                }
+            ).then(httpResponse => {
+                if (httpResponse.ok) {
+                    return httpResponse.json();
+                } else {
+                    return Promise.reject("wix fetch failed");
+                }
+            })
+    );
+}
