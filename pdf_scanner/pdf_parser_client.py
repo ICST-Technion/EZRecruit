@@ -1,4 +1,3 @@
-from asyncio import events
 import errno
 import requests
 import json
