@@ -42,15 +42,15 @@ def listBoxCvs(listBoxWindow, data, folder):
 def getLastFolder():
     # TODO: close file (use with?)
     try:
-        file = open("chosen-folder.txt", "r")
-        folderpath = file.readline()
+        file = open("chosen-folder.txt", "r", encoding="utf-8")
+        folderpath = file.read()
         return folderpath
     except:
         return ""
 
 def setLastFolder(folderpath):
     # TODO: close file (use with?)
-    file = open("chosen-folder.txt", "w+")
+    file = open("chosen-folder.txt", "w+", encoding="utf-8")
     file.write(folderpath)
 
 def getLastWordsList():
@@ -181,8 +181,6 @@ def dirSearchWindow():
                 setLastWordsList(wordsList)
                 jsonForReq = buildJsonForReq(dirPath, wordsList)
                 threading.Thread(target=scanDir, args=(jsonForReq, window,), daemon=True).start()
-                # sg.Popup('Loading...', keep_on_top=True)
-                # sg.popup_auto_close('Loading...')
                 loadingWindow = sg.Window(title="", layout=loadingWindowLayout())
                 loadingWindow.finalize()
             except:
@@ -275,17 +273,23 @@ def fileSearchWindow():
                 setLastWordsList(wordsList)
                 # print("wordsList: " + wordsList)
                 jsonForReq = buildJsonForReq(filePath, wordsList)
-                r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
-                data = json.loads(r.json())
-                # print(data)
-                printResults(window["-OUTPUT-"], data)
-                listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
+                threading.Thread(target=scanDir, args=(jsonForReq, window,), daemon=True).start()
+                loadingWindow = sg.Window(title="", layout=loadingWindowLayout())
+                loadingWindow.finalize()
                 # window["-OUTPUT-"].print(data)
             except:
                 print("ERROR IN PARSING")
         elif event == "-CV LIST-":
             filepath = os.path.join(values["-FOLDER-"], values["-CV LIST-"][0])
             subprocess.Popen([filepath],shell=True)
+        elif event == "-SCANDONE-":
+            loadingWindow.finalize()
+            loadingWindow.close()
+            sg.Popup('Done!', keep_on_top=True)
+            r = values[event]
+            data = json.loads(r.json())
+            printResults(window["-OUTPUT-"], data)
+            listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
             
 
     window.close()
