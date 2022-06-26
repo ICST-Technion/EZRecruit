@@ -1,3 +1,4 @@
+from asyncio import events
 import errno
 import requests
 import json
@@ -5,6 +6,7 @@ from fileinput import FileInput
 import PySimpleGUI as sg
 import os.path
 import subprocess
+import threading
 
 # sg.theme_previewer()
 sg.theme('BlueMono')    # Keep things interesting for your users
@@ -93,14 +95,33 @@ def initData(window):
     window["-WordsList-"].update(getLastWordsList())
     window.refresh()
 
-def loadingWindow():
+
+def scanDir(jsonForReq, window):
+    """
+    A worker thread that communicates with the GUI through a queue
+    This thread can block for as long as it wants and the GUI will not be affected
+    :param seconds: (int) How long to sleep, the ultimate blocking call
+    :param gui_queue: (queue.Queue) Queue to communicate back to GUI that task is completed
+    :return:
+    """
+    r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
+    window.write_event_value('-SCANDONE-', r)  # put a message into queue for GUI
+    
+def loadingWindowLayout():
     layout = [
         [
             sg.Text("Loading...")
         ]
     ]
-    window = sg.Window(title="", layout=layout)
-    return window
+    return layout
+    # window = sg.Window(title="", layout=layout)
+    # while True:
+      #   event, values = window.read()
+        # End program if user closes window or
+        # presses the OK button
+        # if event == "EXIT" or event == sg.WIN_CLOSED:
+          #  break
+    # window.close()
 
 
 def dirSearchWindow():
@@ -159,15 +180,25 @@ def dirSearchWindow():
                 wordsList = values["-WordsList-"]
                 setLastWordsList(wordsList)
                 jsonForReq = buildJsonForReq(dirPath, wordsList)
-                r = requests.post(url = API_ENDPOINT, json = jsonForReq, headers={'content-type': 'application/json'})
-                data = json.loads(r.json())
-                printResults(window["-OUTPUT-"], data)
-                listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
+                threading.Thread(target=scanDir, args=(jsonForReq, window,), daemon=True).start()
+                # sg.Popup('Loading...', keep_on_top=True)
+                # sg.popup_auto_close('Loading...')
+                loadingWindow = sg.Window(title="", layout=loadingWindowLayout())
+                loadingWindow.finalize()
             except:
                 print("ERROR IN PARSING")
         elif event == "-CV LIST-":
             filepath = os.path.join(values["-FOLDER-"], values["-CV LIST-"][0])
             subprocess.Popen([filepath],shell=True)
+        elif event == "-SCANDONE-":
+            loadingWindow.finalize()
+            loadingWindow.close()
+            sg.Popup('Done!', keep_on_top=True)
+            r = values[event]
+            data = json.loads(r.json())
+            printResults(window["-OUTPUT-"], data)
+            listBoxCvs(window["-CV LIST-"], data, values["-FOLDER-"])
+
     window.close()
 
 def fileSearchWindow():
