@@ -38,6 +38,7 @@ def listBoxCvs(listBoxWindow, data, folder):
     listBoxWindow.update(filesList)
 
 def getLastFolder():
+    # TODO: close file (use with?)
     try:
         file = open("chosen-folder.txt", "r")
         folderpath = file.readline()
@@ -46,10 +47,12 @@ def getLastFolder():
         return ""
 
 def setLastFolder(folderpath):
+    # TODO: close file (use with?)
     file = open("chosen-folder.txt", "w+")
     file.write(folderpath)
 
 def getLastWordsList():
+    # TODO: close file (use with?)
     try:
         file = open("words-list.txt", "r", encoding="utf-8")
         print("check")
@@ -63,6 +66,7 @@ def getLastWordsList():
         return ""
 
 def setLastWordsList(wordsList):
+    # TODO: close file (use with?)
     file = open("words-list.txt", "w+", encoding="utf-8")
     file.write(wordsList)
 
